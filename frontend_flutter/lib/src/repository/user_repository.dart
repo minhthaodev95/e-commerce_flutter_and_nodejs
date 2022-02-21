@@ -1,13 +1,14 @@
-import 'dart:math';
-
 import 'package:dio/dio.dart';
 import 'package:frontend_ecommerce_app/src/models/user_model.dart';
 import 'package:frontend_ecommerce_app/src/models/user_register_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:io' show Platform;
 
 class UserRepository {
   Dio dio = Dio(BaseOptions(
-    baseUrl: "http://localhost:3000/api/",
+    baseUrl: Platform.isAndroid
+        ? 'http://10.0.2.2:3000/api/'
+        : 'http://localhost:3000/api/',
     connectTimeout: 5000,
     receiveTimeout: 3000,
   ));
@@ -15,8 +16,12 @@ class UserRepository {
 
   Future<String?> signInWithEmailandPassword(
       String email, String password) async {
-    final response = await dio
-        .post("user/login", data: {"email": email, "password": password});
+    var formData = FormData.fromMap({
+      "email": email,
+      "password": password,
+    });
+
+    final response = await dio.post("user/login", data: formData);
     if (response.statusCode == 200) {
       await setToken(response.data["data"]["token"]);
       return response.data["data"]['id'] as String;
@@ -39,6 +44,8 @@ class UserRepository {
               headers: {"Authorization": "Bearer ${await getToken()}"}));
       if (response.statusCode == 200) {
         return User.fromJson(response.data["data"]);
+      } else if (response.statusCode == 401) {
+        return null;
       } else {
         return null;
       }

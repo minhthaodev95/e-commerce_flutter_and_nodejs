@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
                             .printToken()
                             .then((value) => print('Success'));
                       },
-                      child: Text(' Print Token'))
+                      child: const Text(' Print Token'))
                 ],
               );
             } else {

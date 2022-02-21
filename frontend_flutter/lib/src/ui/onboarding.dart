@@ -47,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
                         SvgPicture.asset('assets/icons/splash.svg'),
                         const SizedBox(height: 10),
                         const Text(
-                          'Exploria',
+                          'ChoDoGo',
                           style: TextStyle(
                             fontFamily: 'Metro',
                             fontSize: 26,
