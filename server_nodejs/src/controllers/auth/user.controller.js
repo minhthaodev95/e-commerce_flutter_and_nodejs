@@ -50,7 +50,7 @@ module.exports = {
             if (user !== null) {
                 bcrypt.compare(req.body.password, user.password, function(err, result) {
                     if (result) {
-                        let token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY, { expiresIn: '1h' });
+                        let token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY, { expiresIn: '30s' });
 
                         res.status(200).send({
                             message: 'success',

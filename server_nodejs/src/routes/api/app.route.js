@@ -18,7 +18,7 @@ let initApiRoutes = (app) => {
         });
         console.log('API request received');
     });
-    router.get('/api/category', categoryController.getCategory);
+    // router.get('/api/category', categoryController.getCategory);
     // router.get('/api/user', userController.getUser);
     router.post('/api/user/register', userController.registerUser);
     // route login routes

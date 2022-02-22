@@ -37,20 +37,25 @@ class UserRepository {
   }
 
   Future<User?> getUser() async {
-    final token = await getToken();
-    if (token != null) {
-      final response = await dio.get("user/me",
-          options: Options(
-              headers: {"Authorization": "Bearer ${await getToken()}"}));
-      if (response.statusCode == 200) {
-        return User.fromJson(response.data["data"]);
-      } else if (response.statusCode == 401) {
-        return null;
+    try {
+      final token = await getToken();
+      if (token != null) {
+        final response = await dio.get("user/me",
+            options: Options(
+                headers: {"Authorization": "Bearer ${await getToken()}"}));
+        if (response.statusCode == 200) {
+          return User.fromJson(response.data["data"]);
+        } else if (response.statusCode == 401) {
+          await removeToken();
+          return null;
+        } else {
+          return null;
+        }
       } else {
         return null;
       }
-    } else {
-      return null;
+    } on Exception catch (e) {
+      // print(e);
     }
   }
 
@@ -58,6 +63,9 @@ class UserRepository {
   //   final token = await getToken();
 
   // }
+  Future<void> removeToken() async {
+    await const FlutterSecureStorage().delete(key: "token");
+  }
 
   Future<String?> getToken() async {
     const storage = FlutterSecureStorage();
