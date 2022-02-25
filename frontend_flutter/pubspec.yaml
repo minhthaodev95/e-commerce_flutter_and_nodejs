@@ -39,6 +39,11 @@ dependencies:
   flutter_bloc: ^8.0.1
   flutter_svg: ^1.0.3
   flutter_secure_storage: ^5.0.2
+  path: ^1.8.0
+  path_provider: ^2.0.9
+  http: ^0.13.4
+  http_parser: ^4.0.0
+  image_picker: ^0.8.4+9
 
 dev_dependencies:
   flutter_test:

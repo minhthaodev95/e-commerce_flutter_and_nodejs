@@ -15,6 +15,7 @@ module.exports = {
                 next();
             });
         } else {
+            console.log('No token');
             return res.status(401).send({
                 message: 'Unauthorized request'
             });

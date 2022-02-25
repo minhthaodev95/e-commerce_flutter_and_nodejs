@@ -1,7 +1,7 @@
 import User from '../../models/user.model';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-
+import fs from 'fs';
 let saltRounds = 10;
 
 
@@ -50,7 +50,7 @@ module.exports = {
             if (user !== null) {
                 bcrypt.compare(req.body.password, user.password, function(err, result) {
                     if (result) {
-                        let token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY, { expiresIn: '30s' });
+                        let token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY, { expiresIn: '30d' });
 
                         res.status(200).send({
                             message: 'success',
@@ -91,6 +91,64 @@ module.exports = {
         }).catch(function(err) {
             console.log("Error: " + err.message);
         })
+    },
+    updateUser: (req, res, next) => {
+        if (req.file) {
+
+            var pathImageArr = req.file.path.split('/');
+            pathImageArr.shift();
+            pathImageArr.shift();
+            pathImageArr.unshift('');
+            var pathImage = pathImageArr.join('/');
+            req.body.image = pathImage;
+        }
+        User.findOneAndUpdate({ _id: req.userId }, {
+            $set: req.body
+        }, (err, user) => {
+            if (err) {
+                // console.error(err);
+                res.status(500).json({
+                    message: 'Error when updating user',
+                    error: err
+                });
+            } else {
+                if (user.image) {
+                    var pathOldAvatar = './src/public' + user.image;
+                    fs.unlinkSync(pathOldAvatar);
+                }
+                res.status(200).json(user);
+            }
+        });
+    },
+
+    uploadImage: (req, res, next) => {
+        console.log('Upload multi files received');
+        if (req.files) {
+            var listImage = [];
+            for (var file of req.files) {
+                var pathImageArr = file.path.split('/');
+                pathImageArr.shift();
+                pathImageArr.shift();
+                pathImageArr.unshift('');
+                var pathImage = pathImageArr.join('/');
+                listImage.push(pathImage);
+                req.body.images = listImage;
+
+            }
+        }
+        User.findOneAndUpdate({ _id: req.userId }, {
+            $push: { images: req.body.images }
+        }, { new: true }, (err, user) => {
+            if (err) {
+                // console.error(err);
+                res.status(500).json({
+                    message: 'Error when updating user',
+                    error: err
+                });
+            } else {
+                res.status(200).json(user);
+            }
+        });
     }
 
 }

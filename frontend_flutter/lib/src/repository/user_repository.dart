@@ -2,7 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:frontend_ecommerce_app/src/models/user_model.dart';
 import 'package:frontend_ecommerce_app/src/models/user_register_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:io' show Platform;
+// import 'package:path_provider/path_provider.dart';
+// import 'package:path/path.dart';
+import 'dart:io' show File, Platform;
+import 'package:http_parser/http_parser.dart';
 
 class UserRepository {
   Dio dio = Dio(BaseOptions(
@@ -59,10 +62,6 @@ class UserRepository {
     }
   }
 
-  // Future<bool> isLogin() async {
-  //   final token = await getToken();
-
-  // }
   Future<void> removeToken() async {
     await const FlutterSecureStorage().delete(key: "token");
   }
@@ -103,6 +102,40 @@ class UserRepository {
   Future<void> deleteUser() async {}
 
   Future<void> updateUser(User user) async {}
+
+  Future<String> uploadUserAvatar(File file) async {
+    String fileName = file.path.split('/').last;
+    FormData formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(file.path, filename: fileName),
+    });
+    // print('Data: $formData');
+    final response = await dio.put("/user/me",
+        options:
+            Options(headers: {"Authorization": "Bearer ${await getToken()}"}),
+        data: formData);
+    return response.data['id'];
+  }
+
+  Future<void> uploadMultiImage(List<File?> images) async {
+    if (images.isNotEmpty) {
+      // ignore: prefer_typing_uninitialized_variables
+      var formData = FormData.fromMap({"files": []});
+      for (var i = 0; i < images.length; i++) {
+        formData.files.addAll([
+          MapEntry(
+              "files",
+              await MultipartFile.fromFile(images[i]!.path,
+                  filename: images[i]!.path.split("/").last)),
+        ]);
+      }
+
+      final response = await dio.post("/user/me/upload",
+          options:
+              Options(headers: {"Authorization": "Bearer ${await getToken()}"}),
+          data: formData);
+      print(response.data);
+    }
+  }
 
   Future<void> updateUserPassword(String password) async {}
 

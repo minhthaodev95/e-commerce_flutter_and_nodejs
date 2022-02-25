@@ -2,6 +2,11 @@ import Category from '../../models/category.model';
 import Product from '../../models/product.model';
 import User from '../../models/user.model';
 
+
+
+
+
+
 module.exports = {
     getAllProduct: (req, res, next) => {
         Product.find({}).populate('category').populate('user').exec((err, products) => {
@@ -31,6 +36,9 @@ module.exports = {
         });
     },
     createProduct: (req, res, next) => {
+
+        // req.file.path = req.file.path.replace('public', '');
+
         const product = new Product({
             title: req.body.title,
             description: req.body.description,
