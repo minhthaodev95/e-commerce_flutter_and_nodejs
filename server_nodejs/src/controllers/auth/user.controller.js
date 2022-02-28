@@ -1,79 +1,25 @@
 import User from '../../models/user.model';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import fs from 'fs';
-let saltRounds = 10;
+require('dotenv').config();
+const mongoose = require('mongoose');
+
+let gridfsBucket;
+const conn = mongoose.createConnection(process.env.MONGODB_URI);
+
+// Init gfs
+conn.once('open', () => {
+    // Init stream
+    gridfsBucket = new mongoose.mongo.GridFSBucket(conn.db, {
+        bucketName: 'avatar',
+    });
+
+});
 
 
 
 module.exports = {
-    registerUser: async(req, res) => {
-        let user = await User.findOne({ email: req.body.email });
-        if (user == null) {
-            bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    let user = new User({
-                        name: req.body.username,
-                        email: req.body.email,
-                        password: hash,
-                        phone: req.body.phone,
-                    });
-                    user.save(function(err, result) {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            console.log(result)
-                        }
-                    });
-                    res.status(200).send({
-                        "message": " User Registed !",
-                        "status": "success"
-                    });
-                }
-            });
-        } else {
-            console.log("User already exist");
-            res.status(203).json({
-                "message": "User already exists !",
-                "status": "error"
-            });
 
-        }
-
-
-
-    },
-    loginUser: (req, res, next) => {
-        User.findOne({ email: req.body.email }).then((user) => {
-            if (user !== null) {
-                bcrypt.compare(req.body.password, user.password, function(err, result) {
-                    if (result) {
-                        let token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY, { expiresIn: '30d' });
-
-                        res.status(200).send({
-                            message: 'success',
-                            data: {
-                                ...user.toJSON(),
-                                token
-                            }
-                        });
-                    } else {
-                        next(err);
-                    }
-                });
-            } else {
-                console.error("User not found");
-            }
-            // console.log(user);
-
-        }).catch(function(err) {
-
-
-            console.log("Error: " + err.message);
-        })
-    },
     getUser: (req, res, next) => {
         User.findOne({ _id: req.userId }).then((user) => {
             if (user !== null) {
@@ -94,12 +40,8 @@ module.exports = {
     },
     updateUser: (req, res, next) => {
         if (req.file) {
-
-            var pathImageArr = req.file.path.split('/');
-            pathImageArr.shift();
-            pathImageArr.shift();
-            pathImageArr.unshift('');
-            var pathImage = pathImageArr.join('/');
+            var pathImage = '/avatar/' + req.file.filename;
+            console.log(pathImage);
             req.body.image = pathImage;
         }
         User.findOneAndUpdate({ _id: req.userId }, {
@@ -112,43 +54,71 @@ module.exports = {
                     error: err
                 });
             } else {
-                if (user.image) {
-                    var pathOldAvatar = './src/public' + user.image;
-                    fs.unlinkSync(pathOldAvatar);
+                if (user.image != null) {
+                    var arrImage = user.image.split('/');
+                    arrImage.shift();
+                    arrImage.shift();
+                    var fileimage = arrImage.join('');
+
+                    gridfsBucket.find({ filename: fileimage }).toArray(function(err, files) {
+                        files.forEach(function(file) {
+                            gridfsBucket.delete(file._id);
+                        })
+                    })
+
                 }
+
                 res.status(200).json(user);
             }
         });
     },
-
-    uploadImage: (req, res, next) => {
-        console.log('Upload multi files received');
-        if (req.files) {
-            var listImage = [];
-            for (var file of req.files) {
-                var pathImageArr = file.path.split('/');
-                pathImageArr.shift();
-                pathImageArr.shift();
-                pathImageArr.unshift('');
-                var pathImage = pathImageArr.join('/');
-                listImage.push(pathImage);
-                req.body.images = listImage;
-
-            }
-        }
-        User.findOneAndUpdate({ _id: req.userId }, {
-            $push: { images: req.body.images }
-        }, { new: true }, (err, user) => {
+    // delete user
+    deleteUser: (req, res, next) => {
+        User.findOneAndDelete({ _id: req.userId }, (err, user) => {
             if (err) {
-                // console.error(err);
                 res.status(500).json({
-                    message: 'Error when updating user',
+                    message: 'Error when deleting user',
                     error: err
                 });
             } else {
-                res.status(200).json(user);
+                res.status(204).json({
+                    message: 'User successfully deleted'
+                });
             }
         });
-    }
+    },
+    // request update role for user
+    // updateRole:
+    // get avatar for user
+    getAvatar: (req, res, next) => {
+        gridfsBucket.find({ filename: req.params.filename }).toArray((err, files) => {
+            // Check if file
+            //console.log('file : ', file);
+            files.forEach((file) => {
+                if (!file || file.length === 0) {
+                    return res.status(404).json({
+                        err: 'No file exists'
+                    });
+                }
+                // Check if image
+                if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
+                    // Read output to browser
+                    const readstream = gridfsBucket.openDownloadStream(file._id);
+                    readstream.pipe(res);
+                } else if (file.contentType === 'application/octet-stream') {
+                    //console.log('file.contentType', file.contentType); /// run here
+                    const readstream = gridfsBucket.openDownloadStream(file._id);
+                    readstream.pipe(res);
+                } else {
+                    res.status(404).json({
+                        err: 'Not an image'
+                    });
+                }
+            });
+
+        });
+    },
+
+
 
 }

@@ -1,10 +1,9 @@
-import 'dart:io' show File;
+import 'dart:io' show File, Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend_ecommerce_app/src/blocs/auth_bloc/auth_bloc.dart';
-import 'package:frontend_ecommerce_app/src/models/user_model.dart';
 import 'package:frontend_ecommerce_app/src/repository/user_repository.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -71,14 +70,21 @@ class _HomePageState extends State<HomePage> {
               return Column(
                 children: [
                   state.user.image == null
-                      ? const CircularProgressIndicator()
+                      ? Container()
                       : ClipOval(
-                          child: Image.network(
-                            'http://localhost:3000${state.user.image}',
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
+                          child: Platform.isAndroid
+                              ? Image.network(
+                                  'http://10.0.2.2:3000/api/user/me${state.user.image}',
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.network(
+                                  'http://localhost:3000/api/user/me${state.user.image}',
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                ),
                         ),
                   Center(
                     child: Text('Hello  ${state.user.name}'),
@@ -86,8 +92,10 @@ class _HomePageState extends State<HomePage> {
                   ElevatedButton(
                       onPressed: () async {
                         await pickerImage();
-                        await UserRepository().uploadUserAvatar(image!);
-                        BlocProvider.of<AuthBloc>(context).add(AppStarted());
+                        if (image != null) {
+                          await UserRepository().uploadUserAvatar(image!);
+                          BlocProvider.of<AuthBloc>(context).add(AppStarted());
+                        }
                       },
                       child: const Text(' Upload avatar')),
                   ElevatedButton(

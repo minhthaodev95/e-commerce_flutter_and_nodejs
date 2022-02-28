@@ -1,11 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:frontend_ecommerce_app/src/blocs/auth_bloc/auth_bloc.dart';
-import 'package:frontend_ecommerce_app/src/blocs/login_bloc/login_bloc.dart';
 
-import '../../validator.dart';
 import 'components/form_login.dart';
 
 class LoginPage extends StatefulWidget {

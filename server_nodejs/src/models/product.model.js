@@ -11,6 +11,7 @@ const ProductSchema = new mongoose.Schema({
     },
     price: {
         type: Number,
+        index: true,
         required: true
     },
     category: {
@@ -23,11 +24,11 @@ const ProductSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    image: {
+    featureImage: {
         type: String,
         required: false
     },
-    list_image: [{
+    images: [{
         type: String,
         required: false
     }],

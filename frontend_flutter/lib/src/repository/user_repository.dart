@@ -5,7 +5,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // import 'package:path_provider/path_provider.dart';
 // import 'package:path/path.dart';
 import 'dart:io' show File, Platform;
-import 'package:http_parser/http_parser.dart';
 
 class UserRepository {
   Dio dio = Dio(BaseOptions(
@@ -19,12 +18,10 @@ class UserRepository {
 
   Future<String?> signInWithEmailandPassword(
       String email, String password) async {
-    var formData = FormData.fromMap({
+    final response = await dio.post("user/auth/login", data: {
       "email": email,
       "password": password,
     });
-
-    final response = await dio.post("user/login", data: formData);
     if (response.statusCode == 200) {
       await setToken(response.data["data"]["token"]);
       return response.data["data"]['id'] as String;
@@ -34,7 +31,7 @@ class UserRepository {
   }
 
   Future<int?> registerWithEmailandPassword(UserRegister user) async {
-    final response = await dio.post("user/register", data: user.toJson());
+    final response = await dio.post("user/auth/register", data: user.toJson());
 
     return response.statusCode ?? 401;
   }
@@ -106,7 +103,7 @@ class UserRepository {
   Future<String> uploadUserAvatar(File file) async {
     String fileName = file.path.split('/').last;
     FormData formData = FormData.fromMap({
-      "file": await MultipartFile.fromFile(file.path, filename: fileName),
+      "files": await MultipartFile.fromFile(file.path, filename: fileName),
     });
     // print('Data: $formData');
     final response = await dio.put("/user/me",

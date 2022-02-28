@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 const categorySchema = new mongoose.Schema({
     title: {
         type: String,
+        index: { unique: true },
         required: true
     },
     description: {

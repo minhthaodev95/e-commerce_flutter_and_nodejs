@@ -33,7 +33,7 @@ module.exports = {
     updateCategory: (req, res, next) => {
         Category.findByIdAndUpdate(req.params.id, {
             $set: req.body
-        }, (err, category) => {
+        }, { new: true }, (err, category) => {
             if (err) {
                 res.status(500).json({
                     message: 'Error when updating category',
@@ -52,7 +52,9 @@ module.exports = {
                     error: err
                 });
             } else {
-                res.status(200).json(category);
+                res.status(200).json({
+                    message: 'Delete category success'
+                });
             }
         });
     }
