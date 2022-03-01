@@ -98,4 +98,25 @@ module.exports = {
             }
         });
     },
+    //update role for user by userId
+    updateRoleForUser: (req, res, next) => {
+        User.findOneAndUpdate({ _id: req.params.userId }, { $set: { role: req.body.role } }, (err, user) => {
+            if (err) {
+                res.status(500).json({
+                    message: 'Error when updating user',
+                    error: err
+                });
+            } else {
+                if (user != null) {
+                    res.status(200).json({
+                        message: 'User successfully updated'
+                    });
+                } else {
+                    res.status(404).json({
+                        message: 'User not found !'
+                    })
+                }
+            }
+        });
+    }
 }
