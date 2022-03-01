@@ -72,37 +72,47 @@ module.exports = {
         });
     },
     updateProduct: (req, res, next) => {
-        console.log('updated');
-
-
 
         Product.findOneAndUpdate({ _id: req.params.id, user: req.userId }, {
             $set: req.body
         }, { new: true }, (err, product) => {
-            // console.log(product);
             if (err) {
                 console.error(err);
                 res.status(500).json({
                     message: 'Error when updating product',
                     error: err
                 });
-            } else {
+            }
+            if (product != null) {
+                console.log('success')
                 res.status(200).json(product);
+            } else {
+                res.status(500).json({
+                    message: 'Error when updating product',
+                    error: err
+                })
             }
         });
     },
     deleteProduct: (req, res, next) => {
-        Product.findByIdAndRemove(req.params.id, (err, product) => {
+        Product.findById(req.params.id, (err, product) => {
+            if (req.userId._id == product.user || req.userRole == 'admin') {
+                product.delete();
+                res.status(200).json({
+                    message: 'Product deleted successfully'
+                });
+            } else {
+                res.status(500).json({
+                    message: 'Error when deleting product',
+                    error: err
+                });
+            }
             if (err) {
                 console.error(err);
                 res.status(500).json({
                     message: 'Error when deleting product',
                     error: err
-                });
-            } else {
-                res.status(200).json({
-                    message: 'Delete product success'
-                });
+                })
             }
         });
     },
@@ -168,7 +178,6 @@ module.exports = {
     },
     getImage: (req, res, next) => {
         gridFsBucket.find({ filename: req.params.filename }).toArray((err, files) => {
-            console.log(files);
             files.forEach((file) => {
                 if (!file || file.length === 0) {
                     return res.status(404).json({
@@ -225,9 +234,24 @@ module.exports = {
 
     //get products by date(range)
     getProductByDateRange: (req, res, next) => {
-
         Product.find({
             created_at: { $gte: new Date(req.params.min), $lte: new Date(req.params.max).setHours(23, 59, 59) }
+        }).populate('category').populate('user').exec((err, products) => {
+            if (err) {
+                console.error(err);
+                res.status(500).json({
+                    message: 'Error when getting product',
+                    error: err
+                });
+            } else {
+                res.status(200).json(products);
+            }
+        });
+    },
+    //get products by tags
+    getProductByTags: (req, res, next) => {
+        Product.find({
+            tags: { $in: req.params.tag }
         }).populate('category').populate('user').exec((err, products) => {
             if (err) {
                 console.error(err);

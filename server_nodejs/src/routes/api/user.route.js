@@ -42,15 +42,46 @@ const upload = multer({ storage: storage_avatar });
 
 
 let userRoutes = (app) => {
-
-    router.get('/me', authController.isAuthenticated, userController.getUser);
-    //update user routes
-    router.put('/me', authController.isAuthenticated, upload.single('files'), userController.updateUser);
-    //delete user routes
-    router.delete('/me', authController.isAuthenticated, userController.deleteUser);
-    // stream image routes
+    router.get('/me', userController.getUser);
+    router.put('/me', upload.single('files'), userController.updateUser);
+    router.delete('/me', userController.deleteUser);
     router.get('/me/avatar/:filename', userController.getAvatar);
-
-    return app.use('/api/user', router);
+    return app.use('/api/user', authController.isAuthenticated, router);
 }
 module.exports = userRoutes;
+/**
+ * @swagger
+ * /api/user/me:
+ *     get:
+ *        summary: Get user
+ *        tags:
+ *           - User
+ * */
+//update user routes
+/**
+ * @swagger
+ * /api/user/me:
+ *     put:
+ *         summary: Update user by Id
+ *         tags:
+ *             - User
+ * */
+
+/**
+ * @swagger
+ * /api/user/me:
+ *     delete:
+ *         summary: Delete user byId
+ *         tags:
+ *             - User
+ * */
+//delete user routes
+// stream image routes
+/**
+ * @swagger
+ * /api/user/me/avatar/:filename:
+ *     get:
+ *         summary: Link stream image get from database
+ *         tags:
+ *             - User
+ * */

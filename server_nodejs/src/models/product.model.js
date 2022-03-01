@@ -32,6 +32,10 @@ const ProductSchema = new mongoose.Schema({
         type: String,
         required: false
     }],
+    tags: [{
+        type: String,
+        required: false
+    }],
     created_at: {
         type: Date,
         default: Date.now

@@ -42,32 +42,139 @@ const upload = multer({ storage: storage });
 
 let productApi = (app) => {
     //get all products from
+    /**
+     * @swagger
+     * /api/product:
+     *     get:
+     *         summary: Get all products
+     *         tags:
+     *           - Products
+     * */
     router.get('/', productController.getAllProduct);
     //post a product
+    /**
+     * @swagger
+     * /api/product:
+     *     post:
+     *         summary: Create a porduct (role is "shopOwner" or "admin" )
+     *         tags:
+     *           - Products
+     * */
     router.post('/', authController.isShopOwner,
         upload.array('images', 12),
         productController.createProduct);
     // get product by _id
+    /**
+     * @swagger
+     * /api/product/:id:
+     *     get:
+     *         summary: Get a product by ID
+     *         tags:
+     *           - Products
+     * */
     router.get('/:id', productController.getProductById);
     // delete product by _id
+    /**
+     * @swagger
+     * /api/product/:id:
+     *     delete:
+     *         summary: Delete product by ID ("shopOwner" or "admin")
+     *         tags:
+     *           - Products
+     * */
     router.delete('/:id', authController.isShopOwner, productController.deleteProduct);
     // update product by _id
+    /**
+     * @swagger
+     * /api/product/:id:
+     *     put:
+     *         summary: Update product by ID ("shopOwner" or "admin")
+     *         tags:
+     *           - Products
+     * */
     router.put('/:id', authController.isShopOwner, productController.updateProduct);
     //get product by userId
+    /**
+     * @swagger
+     * /api/product/user/:id:
+     *     get:
+     *         summary: Get all user's products by userId 
+     *         tags:
+     *           - Products
+     * */
     router.get('/user/:id', productController.getProductByUser);
 
     //get products by categoryId
+    //get product by userId
+    /**
+     * @swagger
+     * /api/product/category/:id:
+     *     get:
+     *         summary: Get all products by category 
+     *         tags:
+     *           - Products
+     * */
     router.get('/category/:categoryId', productController.getProductByCategory);
     //stream Image products
+    //get product by userId
+    /**
+     * @swagger
+     * /api/product/image/:filename:
+     *     get:
+     *         summary: Link stream image products
+     *         tags:
+     *           - Products
+     * */
     router.get('/image/:filename', productController.getImage);
 
     // get Products by price (range)
+    //get product by userId
+    /**
+     * @swagger
+     * /api/product/price/:min/:max:
+     *     get:
+     *         summary: Get all products by range price 
+     *         tags:
+     *           - Products
+     * */
     router.get('/price/:min/:max', productController.getProductByPriceRange);
     //get Products by name
+    //get product by userId
+    /**
+     * @swagger
+     * /api/product/name/:name:
+     *     get:
+     *         summary: Get all products by name
+     *         tags:
+     *           - Products
+     * */
     router.get('/name/:name', productController.getProductByNames);
 
     //get products by date (range)
+    //get product by userId
+    /**
+     * @swagger
+     * /api/product/date/:min/:max:
+     *     get:
+     *         summary: Get all products by range date 
+     *         tags:
+     *           - Products
+     * */
     router.get('/date/:min/:max', productController.getProductByDateRange);
+
+    //get product by tag
+    /**
+     * @swagger
+     * /api/product/tags/:tags:
+     *    get:
+     *        summary: Get all products by tag
+     *        tags:
+     *          - Products
+     * */
+    router.get('/tags/:tag', productController.getProductByTags);
+
+
+
     return app.use('/api/product', authController.isAuthenticated, router);
 }
 

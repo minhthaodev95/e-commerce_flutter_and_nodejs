@@ -4,10 +4,36 @@ import authRoutes from './routes/api/auth.route';
 import productApi from './routes/api/product.route';
 import categoryApi from './routes/api/category.route';
 import userRoutes from './routes/api/user.route';
+import adminRoutes from './routes/api/admin.route';
+import authController from './controllers/auth/auth.controller';
 import cors from 'cors';
 import configViewEngine from './config/viewEngine';
-// const upload = multer();
+
+// swagger UI
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsDoc from 'swagger-jsdoc';
+
+const options = {
+    definition: {
+        openapi: "3.0.0",
+        info: {
+            title: 'E-commerce app API',
+            description: 'A node app API for e-commerce',
+            version: '1.0.0',
+        },
+        servers: [{
+            url: 'http://localhost:3000',
+        }],
+    },
+    customCss: '.swagger-ui .topbar { display: none }',
+    apis: ['./src/routes/api/*.route.js']
+}
+
+const specs = swaggerJsDoc(options);
+
 const app = express();
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 
 
@@ -20,9 +46,13 @@ app.use(cors({
     origin: 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
 }));
 
+
+
 configViewEngine(app);
-// app.use(upload.array());
+
 // api routes
+app.use('/api/admin', authController.isAuthenticated, adminRoutes);
+
 authRoutes(app);
 productApi(app);
 userRoutes(app);

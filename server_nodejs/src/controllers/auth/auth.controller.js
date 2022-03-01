@@ -33,6 +33,7 @@ module.exports = {
     isAdmin: (req, res, next) => {
         User.findById(req.userId).then((user) => {
             if (user.role === 'admin') {
+                req.userRole = user.role;
                 next();
             } else {
                 return res.status(401).json({
@@ -47,6 +48,7 @@ module.exports = {
     isShopOwner: (req, res, next) => {
         User.findById(req.userId).then((user) => {
             if (user.role === 'shopOwner' || user.role === 'admin') {
+                req.userRole = user.role;
                 next();
             } else {
                 return res.status(401).json({
