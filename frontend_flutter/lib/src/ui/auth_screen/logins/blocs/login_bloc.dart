@@ -17,16 +17,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     try {
       String? id = await UserRepository()
           .signInWithEmailandPassword(event.email, event.password);
-      print('id : $id');
       if (id != null) {
+        await Future.delayed(const Duration(milliseconds: 500));
         emit(LoginState.success());
       } else {
-        print('emit failure');
+        await Future.delayed(const Duration(milliseconds: 500));
         emit(LoginState.failure());
       }
     } catch (_) {
-      print('emit catch error failure');
-      print(_);
+      await Future.delayed(const Duration(milliseconds: 1));
       emit(LoginState.failure());
     }
   }

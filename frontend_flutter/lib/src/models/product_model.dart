@@ -1,34 +1,37 @@
+import 'package:frontend_ecommerce_app/src/models/category.dart';
+import 'package:frontend_ecommerce_app/src/models/user_model.dart';
+
 class Product {
+  final String id;
   final String title;
   final String description;
-  final String image;
-  final double price;
-  final String id;
-  final String userName;
-  final String userId;
-  final DateTime dateCreated;
+  final List<String> images;
+  final List<String> tags;
+  final int price;
+  final User user;
+  final Category category;
 
   Product({
+    required this.id,
     required this.title,
     required this.description,
-    required this.image,
     required this.price,
-    required this.id,
-    required this.userName,
-    required this.userId,
-    required this.dateCreated,
+    required this.images,
+    required this.tags,
+    required this.user,
+    required this.category,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      title: json["title"].toString(),
-      description: json["description"].toString(),
-      image: json["image"].toString(),
-      price: json["price"].toDouble(),
-      id: json["id"].toString(),
-      userName: json["userName"].toString(),
-      userId: json["userId"].toString(),
-      dateCreated: DateTime.parse(json["dateCreated"]),
+      id: json['_id'],
+      title: json['title'],
+      description: json['description'],
+      images: json['images'].cast<String>(),
+      tags: json['tags'].cast<String>(),
+      price: json['price'],
+      user: User.fromJson(json['user']),
+      category: Category.fromJson(json['category']),
     );
   }
 
@@ -36,12 +39,11 @@ class Product {
     return {
       "title": title,
       "description": description,
-      "image": image,
+      "images": images,
       "price": price,
-      "id": id,
-      "userName": userName,
-      "userId": userId,
-      "dateCreated": dateCreated.toIso8601String(),
+      "user": user.id,
+      "category": category.id,
+      "tags": tags,
     };
   }
 }

@@ -2,9 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:frontend_ecommerce_app/src/models/user_model.dart';
 import 'package:frontend_ecommerce_app/src/models/user_register_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-// import 'package:path_provider/path_provider.dart';
-// import 'package:path/path.dart';
-import 'dart:io' show File, Platform;
+import 'dart:io' show File, HttpHeaders, Platform;
 
 class UserRepository {
   Dio dio = Dio(BaseOptions(
@@ -13,25 +11,37 @@ class UserRepository {
         : 'http://localhost:3000/api/',
     connectTimeout: 5000,
     receiveTimeout: 3000,
+    headers: {
+      HttpHeaders.acceptHeader: "accept:  */*",
+    },
   ));
+
   UserRepository();
 
   Future<String?> signInWithEmailandPassword(
       String email, String password) async {
-    final response = await dio.post("user/auth/login", data: {
-      "email": email,
-      "password": password,
-    });
-    if (response.statusCode == 200) {
-      await setToken(response.data["data"]["token"]);
-      return response.data["data"]['id'] as String;
-    } else {
+    try {
+      final response = await dio.post(
+        "auth/login",
+        data: {
+          "email": email,
+          "password": password,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        await setToken(response.data["data"]["token"]);
+        return response.data["data"]['id'] as String;
+      } else {
+        return null;
+      }
+    } on DioError catch (e) {
       return null;
     }
   }
 
   Future<int?> registerWithEmailandPassword(UserRegister user) async {
-    final response = await dio.post("user/auth/register", data: user.toJson());
+    final response = await dio.post("auth/register", data: user.toJson());
 
     return response.statusCode ?? 401;
   }
@@ -45,7 +55,8 @@ class UserRepository {
                 headers: {"Authorization": "Bearer ${await getToken()}"}));
         if (response.statusCode == 200) {
           return User.fromJson(response.data["data"]);
-        } else if (response.statusCode == 401) {
+        } else if (response.statusCode == 401 &&
+            response.data["error"] == "Token is invalid or expired") {
           await removeToken();
           return null;
         } else {
@@ -55,7 +66,7 @@ class UserRepository {
         return null;
       }
     } on Exception catch (e) {
-      // print(e);
+      print(e);
     }
   }
 
@@ -86,63 +97,38 @@ class UserRepository {
         .onError((error, stackTrace) => print(error));
   }
 
-// to test done will delete
-  Future<void> printToken() async {
-    // get token from keystore/keychain
-    const storage = FlutterSecureStorage();
-    storage
-        .read(key: "token")
-        .then((value) => print('token : $value'))
-        .onError((error, stackTrace) => print(error));
-  }
-
-  Future<void> deleteUser() async {}
-
-  Future<void> updateUser(User user) async {}
-
-  Future<String> uploadUserAvatar(File file) async {
-    String fileName = file.path.split('/').last;
-    FormData formData = FormData.fromMap({
-      "files": await MultipartFile.fromFile(file.path, filename: fileName),
-    });
-    // print('Data: $formData');
-    final response = await dio.put("/user/me",
-        options:
-            Options(headers: {"Authorization": "Bearer ${await getToken()}"}),
-        data: formData);
-    return response.data['id'];
-  }
-
-  Future<void> uploadMultiImage(List<File?> images) async {
-    if (images.isNotEmpty) {
-      // ignore: prefer_typing_uninitialized_variables
-      var formData = FormData.fromMap({"files": []});
-      for (var i = 0; i < images.length; i++) {
-        formData.files.addAll([
-          MapEntry(
-              "files",
-              await MultipartFile.fromFile(images[i]!.path,
-                  filename: images[i]!.path.split("/").last)),
-        ]);
+  Future<void> deleteUser() async {
+    final token = await getToken();
+    if (token != null) {
+      final response = await dio.delete("user/me",
+          options: Options(
+              headers: {"Authorization": "Bearer ${await getToken()}"}));
+      if (response.statusCode == 200) {
+        await logOut();
       }
-
-      final response = await dio.post("/user/me/upload",
-          options:
-              Options(headers: {"Authorization": "Bearer ${await getToken()}"}),
-          data: formData);
-      print(response.data);
     }
   }
 
-  Future<void> updateUserPassword(String password) async {}
+  Future<void> updateUser({User? user, File? file}) async {
+    final token = await getToken();
+    if (token != null) {
+      FormData formData = FormData();
 
-  Future<void> updateUserEmail(String email) async {}
+      formData = FormData.fromMap({
+        "user": user == null ? {} : user.toJson(),
+        "files": file == null
+            ? {}
+            : await MultipartFile.fromFile(file.path,
+                filename: file.path.split('/').last),
+      });
 
-  Future<void> updateUserName(String name) async {}
-
-  Future<void> updateUserPhone(String phone) async {}
-
-  Future<void> updateUserPhoto(String photo) async {}
-
-  Future<void> updateUserAddress(String address) async {}
+      final response = await dio.put("user/me",
+          data: formData,
+          options: Options(
+              headers: {"Authorization": "Bearer ${await getToken()}"}));
+      if (response.statusCode == 200) {
+        await getUser();
+      }
+    }
+  }
 }

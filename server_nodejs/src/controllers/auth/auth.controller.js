@@ -14,15 +14,17 @@ module.exports = {
             var authorization = req.headers.authorization.substring(7);
             jwt.verify(authorization, process.env.SECRET_KEY, function(err, decoded) {
                 if (err) {
+
+                    //return token expiresIn
                     return res.status(401).json({
-                        message: 'Unauthorized request'
+                        error: 'Token is invalid or expired'
                     });
+
                 }
                 req.userId = decoded;
                 next();
             });
         } else {
-            console.log('No token');
             return res.status(401).send({
                 message: 'Unauthorized request'
             });
@@ -36,9 +38,11 @@ module.exports = {
                 req.userRole = user.role;
                 next();
             } else {
+                //return unauthorized request
                 return res.status(401).json({
                     message: 'Unauthorized request'
                 });
+
             }
         }, ).catch(function(err) {
             console.log("Error: " + err.message);
@@ -66,7 +70,6 @@ module.exports = {
                 bcrypt.compare(req.body.password, user.password, function(err, result) {
                     if (result) {
                         let token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY, { expiresIn: '30d' });
-
                         res.status(200).send({
                             message: 'success',
                             data: {
@@ -75,14 +78,15 @@ module.exports = {
                             }
                         });
                     } else {
-                        next(err);
+                        res.status(401).send({
+                            message: 'Invalid email or password'
+                        });
+
                     }
                 });
             } else {
                 console.error("User not found");
             }
-            // console.log(user);
-
         }).catch(function(err) {
 
 

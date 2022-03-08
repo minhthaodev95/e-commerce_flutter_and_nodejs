@@ -16,9 +16,6 @@ const categorySchema = new mongoose.Schema({
 
 const Category = mongoose.model('Category', categorySchema);
 
-// Category.create({
-//     title: 'Category 1',
-//     description: 'This is category 1'
-// });
+
 
 module.exports = Category;

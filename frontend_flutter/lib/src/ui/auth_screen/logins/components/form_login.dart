@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:frontend_ecommerce_app/src/blocs/auth_bloc/auth_bloc.dart';
-import 'package:frontend_ecommerce_app/src/blocs/login_bloc/login_bloc.dart';
+import 'package:frontend_ecommerce_app/src/blocs/auth/auth_bloc.dart';
+import 'package:frontend_ecommerce_app/src/ui/auth_screen/logins/blocs/login_bloc.dart';
 
-import '../../../validator.dart';
+import '../../../../validator.dart';
 
 class FormLogin extends StatefulWidget {
   const FormLogin({Key? key}) : super(key: key);
@@ -42,44 +42,62 @@ class _FormLoginState extends State<FormLogin> {
         create: (context) => LoginBloc(),
         child: BlocListener<LoginBloc, LoginState>(
           listener: (context, state) {
-            if (state.isFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [Text('Login Failure'), Icon(Icons.error)],
-                  ),
-                  backgroundColor: Colors.red,
-                ),
-              );
-            }
-            if (state.isSubmitting) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text('Logging In...'),
-                      CircularProgressIndicator(),
-                    ],
-                  ),
-                ),
-              );
-            }
+            showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                    contentPadding: const EdgeInsets.all(0),
+                    insetPadding: const EdgeInsets.all(0),
+                    title: state.isSubmitting
+                        ? const Text('Đang đăng nhập')
+                        : state.isSuccess
+                            ? const Text('Đăng nhập thành công')
+                            : const Text('Đăng nhập thất bại'),
+                    titleTextStyle: TextStyle(
+                        color: state.isFailure
+                            ? Colors.red[600]
+                            : const Color(0xff25D781),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                    content: SizedBox(
+                      height: 60,
+                      child: Center(
+                        child: state.isSubmitting
+                            ? const SizedBox(
+                                width: 32,
+                                height: 32,
+                                child: CircularProgressIndicator(
+                                  color: Color(0xff25D781),
+                                ),
+                              )
+                            : state.isSuccess
+                                ? const Icon(
+                                    Icons.check_circle_outline_outlined,
+                                    color: Color(0xff25D781),
+                                    size: 48,
+                                  )
+                                : Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red[600],
+                                    size: 48,
+                                  ),
+                      ),
+                    ),
+                  );
+                });
             if (state.isSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  duration: const Duration(seconds: 1),
-                  content: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text('You are logged in !'),
-                      CircularProgressIndicator(),
-                    ],
-                  ),
-                ),
-              );
-              BlocProvider.of<AuthBloc>(context).add(LoggedIn());
+              Future.delayed(const Duration(milliseconds: 500), () {
+                BlocProvider.of<AuthBloc>(context).add(LoggedIn());
+              });
+            } else if (state.isFailure) {
+              Future.delayed(const Duration(seconds: 1), () {
+                Navigator.of(context)
+                  ..pop()
+                  ..pop();
+              });
             }
           },
           child: BlocBuilder<LoginBloc, LoginState>(
@@ -173,48 +191,22 @@ class _FormLoginState extends State<FormLogin> {
                       ),
                     ),
                     Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  child: Container(
-                                    padding: const EdgeInsets.only(
-                                      left: 10,
-                                    ),
-                                    width: 40,
-                                    child: Transform.scale(
-                                      alignment: Alignment.centerLeft,
-                                      scale: 0.6,
-                                      child: CupertinoSwitch(
-                                        trackColor: const Color(0xffB1C0DE),
-                                        activeColor: const Color(0xff5B67CA),
-                                        value: _rememberBtn,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _rememberBtn = value;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const Text('Remember'),
-                              ]),
-                          GestureDetector(
-                            onTap: () {},
-                            child: Text(
-                              'Forgot password?',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontFamily: 'Roboto',
-                                fontWeight: FontWeight.w400,
-                                color: Colors.blue[300],
-                              ),
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          onTap: () {},
+                          child: Text(
+                            'Forgot password?',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w400,
+                              color: Colors.blue[300],
                             ),
-                          )
-                        ]),
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(
                       height: 20,
                     ),
@@ -236,7 +228,7 @@ class _FormLoginState extends State<FormLogin> {
                             BlocProvider.of<LoginBloc>(context).add(
                                 LoginWithEmailAndPassword(
                                     email: _username.text.trim(),
-                                    password: _passwordController.text));
+                                    password: _passwordController.text.trim()));
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

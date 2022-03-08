@@ -21,14 +21,21 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
       switch (isRegistered) {
         case 203:
+          await Future.delayed(const Duration(milliseconds: 500));
           emit(RegisterState.isExist());
           break;
         case 200:
+          await Future.delayed(const Duration(milliseconds: 500));
           emit(RegisterState.success());
           break;
         default:
+          await Future.delayed(const Duration(milliseconds: 500));
+          emit(RegisterState.failure());
+          break;
       }
     } catch (e) {
+      await Future.delayed(const Duration(milliseconds: 500));
+
       emit(RegisterState.failure());
     }
   }

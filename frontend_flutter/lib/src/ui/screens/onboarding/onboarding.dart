@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:frontend_ecommerce_app/src/blocs/auth_bloc/auth_bloc.dart';
+import 'package:frontend_ecommerce_app/src/blocs/auth/auth_bloc.dart';
 import 'package:frontend_ecommerce_app/src/ui/widgets/custom_clip_path.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -16,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is Authorized) {
-          Navigator.of(context).pushReplacementNamed('/homepage');
+          Navigator.of(context).pushReplacementNamed('/mainscreen');
         }
       },
       child: BlocBuilder<AuthBloc, AuthState>(

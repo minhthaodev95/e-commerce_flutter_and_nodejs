@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:frontend_ecommerce_app/src/blocs/register_bloc/register_bloc.dart';
 import 'package:frontend_ecommerce_app/src/models/user_register_model.dart';
+import 'package:frontend_ecommerce_app/src/ui/auth_screen/register/blocs/register_bloc.dart';
 import 'package:frontend_ecommerce_app/src/validator.dart';
 
 class FormRegister extends StatefulWidget {
@@ -42,59 +42,91 @@ class _FormRegisterState extends State<FormRegister> {
         create: (context) => RegisterBloc(),
         child: BlocListener<RegisterBloc, RegisterState>(
           listener: (context, state) {
-            if (state.isFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text('Register Failure'),
-                      Icon(Icons.error)
-                    ],
-                  ),
-                  backgroundColor: Colors.red,
-                ),
-              );
-            }
-            if (state.isSubmitting) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text('Processing...'),
-                      CircularProgressIndicator(),
-                    ],
-                  ),
-                ),
-              );
-            }
-            if (state.isExists) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  duration: const Duration(seconds: 1),
-                  content: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text('Account already exists !'),
-                    ],
-                  ),
-                ),
-              );
-            }
-            if (state.isSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  duration: const Duration(seconds: 1),
-                  content: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text('Registration Successful !!'),
-                      CircularProgressIndicator(),
-                    ],
-                  ),
-                ),
-              );
+            showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                    contentPadding: const EdgeInsets.all(0),
+                    insetPadding: const EdgeInsets.all(0),
+                    title: state.isSubmitting
+                        ? const Text(
+                            'Đang đăng ký',
+                            textAlign: TextAlign.center,
+                          )
+                        : state.isSuccess
+                            ? const Text(
+                                'Đăng ký thành công',
+                                textAlign: TextAlign.center,
+                              )
+                            : state.isExists
+                                ? const Text(
+                                    'Email đã tồn tại',
+                                    textAlign: TextAlign.center,
+                                  )
+                                : const Text('Đăng ký thất bại',
+                                    textAlign: TextAlign.center),
+                    titleTextStyle: TextStyle(
+                        color: state.isFailure || state.isExists
+                            ? Colors.red[600]
+                            : const Color(0xff25D781),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                    content: SizedBox(
+                      height: 60,
+                      child: Center(
+                        child: state.isSubmitting
+                            ? const SizedBox(
+                                width: 32,
+                                height: 32,
+                                child: CircularProgressIndicator(
+                                  color: Color(0xff25D781),
+                                ),
+                              )
+                            : state.isSuccess
+                                ? const Icon(
+                                    Icons.check_circle_outline_outlined,
+                                    color: Color(0xff25D781),
+                                    size: 48,
+                                  )
+                                : Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red[600],
+                                    size: 48,
+                                  ),
+                      ),
+                    ),
+                    actions: state.isSuccess
+                        ? [
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: const Color(0xff4FC7C0),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                    horizontal: 20,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/login');
+                                },
+                                child:
+                                    const Text('Quay lại trang đăng nhập !')),
+                          ]
+                        : [],
+                    actionsAlignment: MainAxisAlignment.center,
+                  );
+                });
+            if (state.isFailure || state.isExists) {
+              Future.delayed(const Duration(seconds: 1), () {
+                Navigator.of(context)
+                  ..pop()
+                  ..pop();
+              });
             }
           },
           child: BlocBuilder<RegisterBloc, RegisterState>(

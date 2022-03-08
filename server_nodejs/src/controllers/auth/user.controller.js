@@ -1,8 +1,15 @@
 import User from '../../models/user.model';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-require('dotenv').config();
 const mongoose = require('mongoose');
+import path from 'path';
+import sharp from 'sharp';
+var crypto = require('crypto');
+import { GridFsStorage } from 'multer-gridfs-storage';
+import { Readable } from 'stream';
+require('dotenv').config();
+
+
 
 let gridfsBucket;
 const conn = mongoose.createConnection(process.env.MONGODB_URI);
@@ -17,13 +24,42 @@ conn.once('open', () => {
 });
 
 
+// avatar storage 
+const storage = new GridFsStorage({
+    url: process.env.MONGODB_URI,
+    file: (req, file) => {
+        return new Promise((resolve, reject) => {
+            crypto.randomBytes(16, (err, buf) => {
+                if (err) {
+                    return reject(err);
+                }
+                const filename = buf.toString('hex') + path.extname(file.originalname);
+                const fileInfo = {
+                    filename: filename,
+                    bucketName: 'avatar',
+                };
+                resolve(fileInfo);
+            });
+        });
+    },
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Invalid file type. Only jpeg and png is allowed.'));
+        }
+    }
+})
+
+
 
 module.exports = {
 
     getUser: (req, res, next) => {
         User.findOne({ _id: req.userId }).then((user) => {
             if (user !== null) {
-                console.log("Loggin Successfully logged in");
+
                 res.status(200).send({
                     message: "User found !",
                     data: user
@@ -38,11 +74,21 @@ module.exports = {
             console.log("Error: " + err.message);
         })
     },
-    updateUser: (req, res, next) => {
+    updateUser: async(req, res, next) => {
         if (req.file) {
-            var pathImage = '/avatar/' + req.file.filename;
-            console.log(pathImage);
-            req.body.image = pathImage;
+            // write image to disk
+            const file = req.file;
+            const data = file.buffer;
+            var buffer = await sharp(data)
+                .resize(200, 200)
+                .jpeg({ quality: 50 })
+                .toBuffer();
+
+            // data here directly contains the buffer object.
+            const fileStream = Readable.from(buffer);
+            // save to gridfs
+            var files = await storage.fromStream(fileStream, req, file);
+            req.body.image = '/avatar/' + files.filename;
         }
         User.findOneAndUpdate({ _id: req.userId }, {
             $set: req.body

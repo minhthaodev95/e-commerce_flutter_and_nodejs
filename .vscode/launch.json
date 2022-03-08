@@ -4,19 +4,16 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-    
         {
-            "name": "frontend_flutter",
-            "cwd": "frontend_flutter",
-            "request": "launch",
-            "type": "dart"
-        },
-        {
-            "name": "frontend_flutter (profile mode)",
-            "cwd": "frontend_flutter",
+            "name": "Flutter-iOS",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
+            "deviceId": "iPhone"
+        },
+        {
+            "name": "Flutter-Android",
+            "request": "launch",
+            "type": "dart",
         }
     ]
 }

@@ -7,9 +7,9 @@ class AppTheme {
     return ThemeData(
       appBarTheme: AppBarTheme(
           elevation: 0,
-          color: colors.green,
+          color: colors.white,
           titleTextStyle: TextStyle(color: colors.text1)),
-      scaffoldBackgroundColor: colors.white,
+      scaffoldBackgroundColor: colors.tertiaryColor,
       splashColor: Colors.transparent,
       fontFamily: 'Poppins',
       primaryColor: colors.primaryColor,
