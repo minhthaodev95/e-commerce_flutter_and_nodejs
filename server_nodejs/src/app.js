@@ -5,6 +5,7 @@ import productApi from './routes/api/product.route';
 import categoryApi from './routes/api/category.route';
 import userRoutes from './routes/api/user.route';
 import adminRoutes from './routes/api/admin.route';
+import cartRoutes from './routes/api/cart.route';
 import authController from './controllers/auth/auth.controller';
 import cors from 'cors';
 import configViewEngine from './config/viewEngine';
@@ -52,6 +53,7 @@ configViewEngine(app);
 
 // api routes
 app.use('/api/admin', authController.isAuthenticated, adminRoutes);
+app.use('/api/cart', authController.isAuthenticated, cartRoutes);
 
 authRoutes(app);
 productApi(app);

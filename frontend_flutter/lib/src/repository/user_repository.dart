@@ -11,9 +11,6 @@ class UserRepository {
         : 'http://localhost:3000/api/',
     connectTimeout: 5000,
     receiveTimeout: 3000,
-    headers: {
-      HttpHeaders.acceptHeader: "accept:  */*",
-    },
   ));
 
   UserRepository();
@@ -21,14 +18,15 @@ class UserRepository {
   Future<String?> signInWithEmailandPassword(
       String email, String password) async {
     try {
-      final response = await dio.post(
-        "auth/login",
-        data: {
-          "email": email,
-          "password": password,
+      final response = await dio.post("auth/login", data: {
+        "email": email,
+        "password": password,
+      }, options: Options(
+        // followRedirects: false,
+        validateStatus: (status) {
+          return status! < 500;
         },
-      );
-
+      ));
       if (response.statusCode == 200) {
         await setToken(response.data["data"]["token"]);
         return response.data["data"]['id'] as String;
@@ -36,6 +34,7 @@ class UserRepository {
         return null;
       }
     } on DioError catch (e) {
+      print(e);
       return null;
     }
   }

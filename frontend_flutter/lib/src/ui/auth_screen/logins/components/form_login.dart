@@ -52,10 +52,11 @@ class _FormLoginState extends State<FormLogin> {
                     contentPadding: const EdgeInsets.all(0),
                     insetPadding: const EdgeInsets.all(0),
                     title: state.isSubmitting
-                        ? const Text('Đang đăng nhập')
+                            
+                        ? const Text('Đang đăng nhập',textAlign: TextAlign.center,)
                         : state.isSuccess
-                            ? const Text('Đăng nhập thành công')
-                            : const Text('Đăng nhập thất bại'),
+                            ? const Text('Đăng nhập thành công',textAlign: TextAlign.center,)
+                            : const Text('Email hoặc mật khẩu không đúng !', textAlign: TextAlign.center,),
                     titleTextStyle: TextStyle(
                         color: state.isFailure
                             ? Colors.red[600]

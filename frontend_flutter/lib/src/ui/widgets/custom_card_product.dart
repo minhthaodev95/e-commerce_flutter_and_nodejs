@@ -38,8 +38,10 @@ class _CustomCardProductState extends State<CustomCardProduct> {
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Positioned(
-              top: 0,
-              bottom: 100,
+              top: 5,
+              left: 0,
+              right: 0,
+              bottom: 65,
               child: Container(
                 margin: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -52,10 +54,7 @@ class _CustomCardProductState extends State<CustomCardProduct> {
                   //   ),
                   // ],
                   borderRadius: BorderRadius.circular(12.0),
-                  // border: Border.all(
-                  //   color: Colors.grey,
-                  //   width: 1,
-                  // ),
+
                   image: DecorationImage(
                     image: Platform.isAndroid
                         ? NetworkImage(
@@ -67,49 +66,82 @@ class _CustomCardProductState extends State<CustomCardProduct> {
                 ),
               ),
             ),
-            const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-              child: Text(
-                NumberFormat.compactCurrency(
-                  //   decimalDigits: 3,
-                  locale: 'vi',
-                  symbol: '₫',
-                  //   decimalDigits: 3,
-                ).format(widget.product.price).toString(),
-                style: const TextStyle(fontSize: 13, color: Color(0xffC73A1B)),
-              ),
-            ),
-            const SizedBox(height: 5),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-              child: RichText(
-                overflow: TextOverflow.ellipsis,
-                // strutStyle: const StrutStyle(fontSize: 12.0),
-                text: TextSpan(
-                  text: widget.product.title,
-                  style: const TextStyle(
-                      color: Color(0xff2C406E),
-                      fontWeight: FontWeight.w400,
-                      fontSize: 14,
-                      fontFamily: 'Roboto'),
-                ),
-              ),
-            ),
-            const SizedBox(height: 4),
-            const Divider(height: 5, color: Colors.grey),
-            const SizedBox(height: 4),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(Icons.shopping_cart, color: Colors.orange[500]),
-                  Text(
-                    'Add to cart',
-                    style: TextStyle(fontSize: 16, color: Colors.orange[500]),
+            Positioned(
+                top: 5,
+                right: 5,
+                child: GestureDetector(
+                    onTap: () {
+                      print('favorite tapped');
+                    },
+                    child:
+                        Icon(Icons.favorite_border, color: Colors.red[600]))),
+            Positioned(
+              bottom: 30,
+              left: 5,
+              right: 5,
+              child: GestureDetector(
+                onTap: () {
+                  print('title tapped redirect to product detail');
+                },
+                child: Wrap(children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                    child: Text(
+                      NumberFormat.currency(
+                        //   decimalDigits: 3,
+                        locale: 'vi',
+                        symbol: '₫',
+                        //   decimalDigits: 3,
+                      ).format(widget.product.price).toString(),
+                      style: const TextStyle(
+                          fontSize: 13, color: Color(0xffC73A1B)),
+                    ),
                   ),
-                ],
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                    child: RichText(
+                      overflow: TextOverflow.ellipsis,
+                      // strutStyle: const StrutStyle(fontSize: 12.0),
+                      text: TextSpan(
+                        text: widget.product.title,
+                        style: const TextStyle(
+                            color: Color(0xff2C406E),
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            fontFamily: 'Roboto'),
+                      ),
+                    ),
+                  ),
+                ]),
+              ),
+            ),
+            const Positioned(
+                bottom: 22,
+                left: 0,
+                right: 0,
+                child: Divider(height: 5, color: Colors.grey)),
+            Positioned(
+              bottom: -3,
+              left: 5,
+              right: 5,
+              child: GestureDetector(
+                onTap: () {
+                  print('Add to cart tapped');
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 5, left: 8.0, right: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Icon(Icons.shopping_cart, color: Colors.orange[500]),
+                      Text(
+                        'Add to cart',
+                        style:
+                            TextStyle(fontSize: 16, color: Colors.orange[500]),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             )
           ],

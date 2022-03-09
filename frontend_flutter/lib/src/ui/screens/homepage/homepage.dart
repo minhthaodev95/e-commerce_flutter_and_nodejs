@@ -7,6 +7,8 @@ import 'package:frontend_ecommerce_app/src/blocs/auth/auth_bloc.dart';
 import 'package:frontend_ecommerce_app/src/models/product_model.dart';
 import 'package:frontend_ecommerce_app/src/repository/porduct_repository.dart';
 import 'package:frontend_ecommerce_app/src/repository/user_repository.dart';
+import 'package:frontend_ecommerce_app/src/ui/widgets/card_product_cart.dart';
+import 'package:frontend_ecommerce_app/src/ui/widgets/card_product_search.dart';
 import 'package:frontend_ecommerce_app/src/ui/widgets/custom_card_product.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -77,7 +79,7 @@ class _HomePageState extends State<HomePage> {
             return SingleChildScrollView(
               physics: const NeverScrollableScrollPhysics(),
               child: Container(
-                padding: const EdgeInsets.only(left: 20, right: 20),
+                // padding: const EdgeInsets.only(left: 20, right: 20),
                 height: MediaQuery.of(context).size.height,
                 child: Column(
                   children: [
@@ -121,6 +123,14 @@ class _HomePageState extends State<HomePage> {
                                   child: CircularProgressIndicator(),
                                 );
                               } else {
+                                // return ListView.builder(
+                                //     itemCount: snapshot.data.length,
+                                //     itemBuilder:
+                                //         (BuildContext context, int index) =>
+                                //             CardProductCart(
+                                //               product: snapshot.data[index],
+                                //             ));
+
                                 return GridView.builder(
                                   shrinkWrap: true,
                                   itemCount: snapshot.data!.length,

@@ -47,8 +47,17 @@ const UserSchema = new mongoose.Schema({
         type: String,
         enum: ['admin', 'customer', 'shopOwner'],
         required: true
-    }
-
+    },
+    purchased_product: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+        required: false
+    }],
+    products_sold: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+        required: false
+    }],
 
 });
 
@@ -64,11 +73,6 @@ UserSchema.set("toJSON", {
 
 const User = mongoose.model('User', UserSchema);
 
-// User.create({
-//     name: 'John',
-//     email: 'john@example.com',
-//     password: 'password',
-//     gender: 'male'
-// });
+
 
 module.exports = User;
