@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:frontend_ecommerce_app/src/models/user_model.dart';
 import 'package:frontend_ecommerce_app/src/models/user_register_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:io' show File, HttpHeaders, Platform;
+import 'dart:io' show File, Platform;
 
 class UserRepository {
   Dio dio = Dio(BaseOptions(
@@ -11,6 +11,9 @@ class UserRepository {
         : 'http://localhost:3000/api/',
     connectTimeout: 5000,
     receiveTimeout: 3000,
+    validateStatus: (status) {
+      return status! < 500;
+    },
   ));
 
   UserRepository();
@@ -111,10 +114,22 @@ class UserRepository {
   Future<void> updateUser({User? user, File? file}) async {
     final token = await getToken();
     if (token != null) {
+      final response = await dio.put("user/me",
+          data: user!.toJson(),
+          options: Options(
+              headers: {"Authorization": "Bearer ${await getToken()}"}));
+      if (response.statusCode == 200) {
+        await getUser();
+      }
+    }
+  }
+
+  Future<void> updateAvatar({File? file}) async {
+    final token = await getToken();
+    if (token != null) {
       FormData formData = FormData();
 
       formData = FormData.fromMap({
-        "user": user == null ? {} : user.toJson(),
         "files": file == null
             ? {}
             : await MultipartFile.fromFile(file.path,

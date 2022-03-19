@@ -48,16 +48,11 @@ const UserSchema = new mongoose.Schema({
         enum: ['admin', 'customer', 'shopOwner'],
         required: true
     },
-    purchased_product: [{
+    order: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
+        ref: 'Order',
         required: false
-    }],
-    products_sold: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
-        required: false
-    }],
+    }
 
 });
 

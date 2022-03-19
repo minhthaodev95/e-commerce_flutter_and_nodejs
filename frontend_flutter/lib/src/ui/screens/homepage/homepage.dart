@@ -4,12 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend_ecommerce_app/src/blocs/auth/auth_bloc.dart';
-import 'package:frontend_ecommerce_app/src/models/product_model.dart';
-import 'package:frontend_ecommerce_app/src/repository/porduct_repository.dart';
+import 'package:frontend_ecommerce_app/src/models/cart_model.dart';
+import 'package:frontend_ecommerce_app/src/repository/cart_repository.dart';
+import 'package:frontend_ecommerce_app/src/repository/order_repository.dart';
 import 'package:frontend_ecommerce_app/src/repository/user_repository.dart';
-import 'package:frontend_ecommerce_app/src/ui/widgets/card_product_cart.dart';
-import 'package:frontend_ecommerce_app/src/ui/widgets/card_product_search.dart';
-import 'package:frontend_ecommerce_app/src/ui/widgets/custom_card_product.dart';
 import 'package:image_picker/image_picker.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,7 +18,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   File? image;
-  List<File?> images = [];
+  late Cart cart;
   @override
   void initState() {
     super.initState();
@@ -54,8 +52,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-
     /*24 is for notification bar on Android*/
 
     return Scaffold(
@@ -78,7 +74,7 @@ class _HomePageState extends State<HomePage> {
           if (state is Authorized) {
             return SingleChildScrollView(
               physics: const NeverScrollableScrollPhysics(),
-              child: Container(
+              child: SizedBox(
                 // padding: const EdgeInsets.only(left: 20, right: 20),
                 height: MediaQuery.of(context).size.height,
                 child: Column(
@@ -107,53 +103,70 @@ class _HomePageState extends State<HomePage> {
                         onPressed: () async {
                           await pickerImage();
                           if (image != null) {
-                            await UserRepository().updateUser(file: image);
+                            await UserRepository().updateAvatar(file: image);
                             BlocProvider.of<AuthBloc>(context)
                                 .add(AppStarted());
                           }
                         },
                         child: const Text(' Upload avatar')),
-                    SizedBox(
-                        height: 600,
-                        child: FutureBuilder<List<Product>>(
-                            builder:
-                                (BuildContext context, AsyncSnapshot snapshot) {
-                              if (!snapshot.hasData) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              } else {
-                                // return ListView.builder(
-                                //     itemCount: snapshot.data.length,
-                                //     itemBuilder:
-                                //         (BuildContext context, int index) =>
-                                //             CardProductCart(
-                                //               product: snapshot.data[index],
-                                //             ));
+                    ElevatedButton(
+                      onPressed: () async {
+                        Cart? response =
+                            await CartRepository().getCartByUserId();
+                        if (response != null) {
+                          cart = response;
+                          // print(cart);
+                        }
+                      },
+                      child: const Text('Get Order'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await OrderRepository().createOrder(cart);
+                      },
+                      child: const Text('Create Order'),
+                    ),
+                    // SizedBox(
+                    //     height: 600,
+                    //     child: FutureBuilder<List<Product>>(
+                    //         builder:
+                    //             (BuildContext context, AsyncSnapshot snapshot) {
+                    //           if (!snapshot.hasData) {
+                    //             return const Center(
+                    //               child: CircularProgressIndicator(),
+                    //             );
+                    //           } else {
+                    //             // return ListView.builder(
+                    //             //     itemCount: snapshot.data.length,
+                    //             //     itemBuilder:
+                    //             //         (BuildContext context, int index) =>
+                    //             //             CardProductCart(
+                    //             //               product: snapshot.data[index],
+                    //             //             ));
 
-                                return GridView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: snapshot.data!.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return CustomCardProduct(
-                                      product: snapshot.data![index],
-                                    );
-                                  },
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                          childAspectRatio:
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .height /
-                                                  1000,
-                                          crossAxisCount: 2,
-                                          crossAxisSpacing: 10.0,
-                                          mainAxisSpacing: 10.0),
-                                );
-                              }
-                            },
-                            future: ProductRepository().getProducts()))
+                    //             return GridView.builder(
+                    //               shrinkWrap: true,
+                    //               itemCount: snapshot.data!.length,
+                    //               itemBuilder:
+                    //                   (BuildContext context, int index) {
+                    //                 return CustomCardProduct(
+                    //                   product: snapshot.data![index],
+                    //                 );
+                    //               },
+                    //               gridDelegate:
+                    //                   SliverGridDelegateWithFixedCrossAxisCount(
+                    //                       childAspectRatio:
+                    //                           MediaQuery.of(context)
+                    //                                   .size
+                    //                                   .height /
+                    //                               1000,
+                    //                       crossAxisCount: 2,
+                    //                       crossAxisSpacing: 10.0,
+                    //                       mainAxisSpacing: 10.0),
+                    //             );
+                    //           }
+                    //         },
+                    //         future: ProductRepository().getProducts()))
                   ],
                 ),
               ),

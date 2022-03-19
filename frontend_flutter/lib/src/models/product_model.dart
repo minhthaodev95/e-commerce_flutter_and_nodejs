@@ -37,6 +37,7 @@ class Product {
 
   Map<String, dynamic> toMap() {
     return {
+      "idProduct": id,
       "title": title,
       "description": description,
       "images": images,

@@ -5,6 +5,7 @@ class User {
   final String name;
   final String email;
   final String phone;
+  final String? address;
   final String role;
   final String? image;
 
@@ -14,7 +15,8 @@ class User {
       required this.phone,
       required this.email,
       required this.role,
-      this.image});
+      this.image,
+      this.address});
 
   Map<String, dynamic> toMap() {
     return {
@@ -23,6 +25,7 @@ class User {
       'phone': phone,
       'role': role,
       'image': image,
+      'address': address,
     };
   }
 
@@ -34,6 +37,7 @@ class User {
       phone: map['phone'],
       role: map['role'],
       image: map['image'],
+      address: map['address'],
     );
   }
 

@@ -11,7 +11,7 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text(
+          title: const Text(
         'CartScreen',
         // style: TextStyle(color: AppTheme.colors.text1),
       )),

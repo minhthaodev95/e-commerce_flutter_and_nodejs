@@ -11,6 +11,9 @@ class AdminRepository {
         : 'http://localhost:3000/api/admin',
     connectTimeout: 5000,
     receiveTimeout: 3000,
+    validateStatus: (status) {
+      return status! < 500;
+    },
   ));
   AdminRepository();
 

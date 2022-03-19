@@ -94,18 +94,48 @@ module.exports = {
         })
     },
 
+    //delete a product in cart with productId
+    deleteProductInCart: async(req, res) => {
+        const productId = req.params.productId;
+        console.log(productId);
+        const user_id = req.userId;
+        Cart.findOne({
+            user_id
+        }).then(cart => {
+
+            const item = cart.items.find(item => item.productId.toString() === productId.toString());
+            if (item) {
+                cart.items.splice(cart.items.indexOf(item), 1);
+            }
+            cart.save().then(cart => {
+                res.status(200).json({
+                    cart
+                })
+            })
+        })
+    },
+
+
 
     getCart: (req, res) => {
         const user_id = req.userId;
 
         Cart.findOne({
             user_id: user_id
-        }).populate({
+        }).populate([{
             path: "items",
             populate: {
-                path: "productId"
+                path: "productId",
+                populate: [{
+                    path: "user",
+                    model: "User"
+                }, {
+                    path: "category",
+                    model: "Category"
+                }]
+
             }
-        }).then((carts) => {
+        }]).then((carts) => {
             console.log(carts);
             if (!carts) {
                 return res.status(404).json({

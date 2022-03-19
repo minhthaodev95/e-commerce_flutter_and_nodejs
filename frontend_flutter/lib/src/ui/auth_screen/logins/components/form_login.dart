@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -18,8 +17,6 @@ class _FormLoginState extends State<FormLogin> {
   final _passwordController = TextEditingController();
 
   final _username = TextEditingController();
-
-  bool _rememberBtn = false;
 
   bool isObscured = true;
 
@@ -52,11 +49,19 @@ class _FormLoginState extends State<FormLogin> {
                     contentPadding: const EdgeInsets.all(0),
                     insetPadding: const EdgeInsets.all(0),
                     title: state.isSubmitting
-                            
-                        ? const Text('Đang đăng nhập',textAlign: TextAlign.center,)
+                        ? const Text(
+                            'Đang đăng nhập',
+                            textAlign: TextAlign.center,
+                          )
                         : state.isSuccess
-                            ? const Text('Đăng nhập thành công',textAlign: TextAlign.center,)
-                            : const Text('Email hoặc mật khẩu không đúng !', textAlign: TextAlign.center,),
+                            ? const Text(
+                                'Đăng nhập thành công',
+                                textAlign: TextAlign.center,
+                              )
+                            : const Text(
+                                'Email hoặc mật khẩu không đúng !',
+                                textAlign: TextAlign.center,
+                              ),
                     titleTextStyle: TextStyle(
                         color: state.isFailure
                             ? Colors.red[600]

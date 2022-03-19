@@ -18,5 +18,5 @@ class Authorized extends AuthState {
   Authorized({required this.user});
 
   @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [user, user.image, user.name, user.phone];
 }

@@ -90,6 +90,8 @@ module.exports = {
             var files = await storage.fromStream(fileStream, req, file);
             req.body.image = '/avatar/' + files.filename;
         }
+
+
         User.findOneAndUpdate({ _id: req.userId }, {
             $set: req.body
         }, (err, user) => {
@@ -100,7 +102,7 @@ module.exports = {
                     error: err
                 });
             } else {
-                if (user.image != null) {
+                if (user.image != null && user.image != req.body.image) {
                     var arrImage = user.image.split('/');
                     arrImage.shift();
                     arrImage.shift();

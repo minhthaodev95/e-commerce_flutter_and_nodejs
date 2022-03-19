@@ -6,6 +6,7 @@ import 'package:frontend_ecommerce_app/src/ui/screens/homepage/homepage.dart';
 import 'package:frontend_ecommerce_app/src/ui/screens/onboarding/onboarding.dart';
 import 'package:frontend_ecommerce_app/src/ui/screens/main/main.dart';
 import 'package:frontend_ecommerce_app/src/ui/screens/profile/profile.dart';
+import 'package:frontend_ecommerce_app/src/ui/screens/profile/profile_child_screen/account.dart';
 import 'package:frontend_ecommerce_app/src/ui/screens/profile/profile_child_screen/products.dart';
 import 'package:frontend_ecommerce_app/src/ui/screens/search/search.dart';
 
@@ -34,6 +35,9 @@ class AppRoute {
         return _materialRoute(const SearchScreen());
       case '/profile':
         return _materialRoute(const ProfileScreen());
+      case '/account':
+        return _materialRoute(const AccountScreen());
+
       case '/myproducts':
         if (settings.arguments != null) {
           final args = settings.arguments as Map;

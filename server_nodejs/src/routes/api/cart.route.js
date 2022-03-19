@@ -6,6 +6,8 @@ const router = express.Router();
 router.post('/', cartController.addToCart);
 router.get('/', cartController.getCart);
 router.delete('/', cartController.deleteCartById);
+//delete a product from the cart by productId
+router.delete('/product/:productId', cartController.deleteProductInCart);
 router.put('/', cartController.updateCart);
 
 module.exports = router;
@@ -45,3 +47,12 @@ module.exports = router;
  *        tags:
  *         - Cart
  * */
+
+/**
+ * @swagger
+ * /api/cart/product/:productId:
+ *      delete:
+ *          summary: Delete product in cart by productId
+ *          tags:
+ *              - Cart
+ */
