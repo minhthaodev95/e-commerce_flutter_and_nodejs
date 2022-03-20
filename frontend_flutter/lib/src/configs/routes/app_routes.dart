@@ -7,6 +7,7 @@ import 'package:frontend_ecommerce_app/src/ui/screens/onboarding/onboarding.dart
 import 'package:frontend_ecommerce_app/src/ui/screens/main/main.dart';
 import 'package:frontend_ecommerce_app/src/ui/screens/profile/profile.dart';
 import 'package:frontend_ecommerce_app/src/ui/screens/profile/profile_child_screen/account.dart';
+import 'package:frontend_ecommerce_app/src/ui/screens/profile/profile_child_screen/order_screen.dart';
 import 'package:frontend_ecommerce_app/src/ui/screens/profile/profile_child_screen/products.dart';
 import 'package:frontend_ecommerce_app/src/ui/screens/search/search.dart';
 
@@ -44,6 +45,8 @@ class AppRoute {
           return _materialRoute(MyProductsScreen(userId: args['userId']));
         }
         break;
+      case '/myorders':
+        return _materialRoute(const OrderScreen());
       default:
     }
   }

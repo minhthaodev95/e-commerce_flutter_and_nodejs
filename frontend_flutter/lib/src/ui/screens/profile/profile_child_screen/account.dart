@@ -59,33 +59,32 @@ class _AccountScreenState extends State<AccountScreen> {
             }
 
             return AlertDialog(
-              title: Text('Edit Profile'),
+              title: Text('Thông tin cá nhân'),
               content: SingleChildScrollView(
                 child: ListBody(
                   children: <Widget>[
-                    Text('Edit your profile'),
                     TextField(
                       controller: nameController,
-                      decoration: InputDecoration(
-                        labelText: 'Name',
+                      decoration: const InputDecoration(
+                        labelText: 'Họ và Tên',
                       ),
                     ),
                     TextField(
                       controller: phoneController,
                       decoration: InputDecoration(
-                        labelText: 'Phone',
+                        labelText: 'Số điện thoại',
                       ),
                     ),
                     TextField(
                       controller: addressController,
                       decoration: InputDecoration(
-                        labelText: 'Address',
+                        labelText: 'Địa chỉ',
                       ),
                     ),
                     TextField(
                       controller: emailController,
                       decoration: InputDecoration(
-                        labelText: 'Email',
+                        labelText: 'Tài khoản Email',
                       ),
                     ),
                   ],
@@ -133,7 +132,8 @@ class _AccountScreenState extends State<AccountScreen> {
               // style: TextStyle(color: AppTheme.colors.text1),
             ),
             actions: [
-              GestureDetector(onTap: editProfile, child: Icon(Icons.edit)),
+              GestureDetector(
+                  onTap: editProfile, child: const Icon(Icons.edit)),
             ]),
         body: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
@@ -194,9 +194,9 @@ class _AccountScreenState extends State<AccountScreen> {
                             ),
                             const SizedBox(height: 5),
                             if (state.user.role == 'shopOwner')
-                              Text('Người bán hàng'),
+                              const Text('Người bán hàng'),
                             if (state.user.role == 'customer')
-                              Text('Khách hàng'),
+                              const Text('Khách hàng'),
                           ],
                         ),
                       ],
