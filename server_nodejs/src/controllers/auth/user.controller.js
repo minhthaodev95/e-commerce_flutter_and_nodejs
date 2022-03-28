@@ -143,7 +143,7 @@ module.exports = {
     // updateRole:
     // get avatar for user
     getAvatar: (req, res, next) => {
-        gridfsBucket.find({ filename: req.params.filename }).toArray((err, files) => {
+        gridfsBucket.find({ filename: req.params.file }).toArray((err, files) => {
             // Check if file
             //console.log('file : ', file);
             files.forEach((file) => {

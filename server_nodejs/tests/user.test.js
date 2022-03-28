@@ -89,7 +89,7 @@ describe('/POST user', () => {
             email: "demo@gmail.com"
         }
         chai.request(server)
-            .post('/api/user/forgot')
+            .post('/api/user/forgot-password')
             .send(info)
             .end((err, res) => {
                 res.should.have.status(200);

@@ -17,12 +17,12 @@ chai.use(chaiHttp);
 describe('/GET products', () => {
     it('it should GET all the products', (done) => {
         chai.request(server)
-            .get('/api/product')
+            .get('/api/products')
             .set("Authorization", "Bearer " + process.env.BEARER_TOKEN)
             .end((err, res) => {
                 res.should.have.status(200);
-                res.body.should.be.a('array');
-                // res.body.length.should.be.eql(0);
+                res.body.should.have.property('data');
+                res.body.data.should.be.a('array');
                 done();
             });
     }).timeout(5000);
@@ -46,14 +46,17 @@ describe('/POST product', () => {
             .end((err, res) => {
                 res.should.have.status(200);
                 res.body.should.be.a('object');
-                res.body.should.have.property('title');
-                res.body.should.have.property('description');
-                res.body.should.have.property('price');
-                res.body.should.have.property('category');
-                res.body.should.have.property('images');
-                res.body.should.have.property('tags');
-                res.body.should.have.property('featureImage');
-                res.body.should.have.property('user');
+                res.body.should.be.have.property('data');
+                res.body.data.should.be.a('object');
+                res.body.data.should.have.property('title');
+                res.body.data.should.have.property('description');
+                res.body.data.should.have.property('price');
+                res.body.data.should.have.property('category');
+                res.body.data.should.have.property('tags');
+                res.body.data.should.have.property('images');
+                res.body.data.should.have.property('_id');
+                res.body.data.should.have.property('user');
+
                 done();
             }).timeout(5000);
     }).timeout(5000);
@@ -67,12 +70,12 @@ describe('/POST product', () => {
 describe('/GET products by category', () => {
     it('it should GET all the products by category', (done) => {
         chai.request(server)
-            .get('/api/product/category/621c8b6b17c7fba318bf1924')
+            .get('/api/products/category/621c8b6b17c7fba318bf1924')
             .set("Authorization", "Bearer " + process.env.BEARER_TOKEN)
             .end((err, res) => {
                 res.should.have.status(200);
-                res.body.should.be.a('array');
-                // res.body.length.should.be.eql(0);
+                res.body.should.have.property('data');
+                res.body.data.should.be.a('array');
                 done();
             }).timeout(5000);
     }).timeout(5000);
@@ -100,14 +103,16 @@ describe('/GET product by id', () => {
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.be.a('object');
-                    res.body.should.have.property('title');
-                    res.body.should.have.property('description');
-                    res.body.should.have.property('price');
-                    res.body.should.have.property('category');
-                    res.body.should.have.property('images');
-                    res.body.should.have.property('tags');
-                    res.body.should.have.property('user');
-                    res.body.should.have.property('_id').eql(_id.toString());
+                    res.body.should.be.have.property('data');
+                    res.body.data.should.be.a('object');
+                    res.body.data.should.have.property('title');
+                    res.body.data.should.have.property('description');
+                    res.body.data.should.have.property('price');
+                    res.body.data.should.have.property('category');
+                    res.body.data.should.have.property('tags');
+                    res.body.data.should.have.property('images');
+                    res.body.data.should.have.property('user');
+                    res.body.data.should.have.property('_id').eql(_id.toString());
                     done();
                 }).timeout(5000);
         });
@@ -119,12 +124,13 @@ describe('/GET product by id', () => {
 describe('/GET products by userId', () => {
     it('it should GET all the products by userId', (done) => {
         chai.request(server)
-            .get('/api/product/user/' + process.env.USER_ID)
+            .get('/api/products/user/' + process.env.USER_ID)
             .set("Authorization", "Bearer " + process.env.BEARER_TOKEN)
             .end((err, res) => {
                 res.should.have.status(200);
-                res.body.should.be.a('array');
-                // res.body.length.should.be.eql(3);
+                res.body.should.be.a('object');
+                res.body.should.have.property('data');
+                res.body.data.should.be.a('array');
                 done();
             }).timeout(5000);
     }).timeout(5000);
@@ -160,14 +166,16 @@ describe('/PUT product by id', () => {
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.be.a('object');
-                    res.body.should.have.property('title');
-                    res.body.should.have.property('description');
-                    res.body.should.have.property('price');
-                    res.body.should.have.property('category');
-                    res.body.should.have.property('images');
-                    res.body.should.have.property('tags');
-                    res.body.should.have.property('user');
-                    res.body.should.have.property('_id').eql(_id.toString());
+                    res.body.should.be.have.property('data');
+                    res.body.data.should.be.a('object');
+                    res.body.data.should.have.property('title');
+                    res.body.data.should.have.property('description');
+                    res.body.data.should.have.property('price');
+                    res.body.data.should.have.property('category');
+                    res.body.data.should.have.property('tags');
+                    res.body.data.should.have.property('images');
+                    res.body.data.should.have.property('user');
+                    res.body.data.should.have.property('_id').eql(_id.toString());
                     done();
                 }).timeout(5000);
         });
@@ -178,12 +186,13 @@ describe('/PUT product by id', () => {
 describe('/GET products by tags', () => {
     it('it should GET all the products by tags', (done) => {
         chai.request(server)
-            .get('/api/product/tags/Test Tag')
+            .get('/api/products/tags/Test Tag')
             .set("Authorization", "Bearer " + process.env.BEARER_TOKEN)
             .end((err, res) => {
                 res.should.have.status(200);
-                res.body.should.be.a('array');
-                // res.body.length.should.be.eql(2);
+                res.body.should.be.a('object');
+                res.body.should.have.property('data');
+                res.body.data.should.be.a('array');
                 done();
             }).timeout(5000);
     }).timeout(5000);
@@ -193,12 +202,14 @@ describe('/GET products by tags', () => {
 describe('/GET products by names', () => {
     it('it should GET all the products by names', (done) => {
         chai.request(server)
-            .get('/api/product/name/Test Product 1')
+            .get('/api/products/name/Test Product 1')
             .set("Authorization", "Bearer " + process.env.BEARER_TOKEN)
             .end((err, res) => {
                 res.should.have.status(200);
-                res.body.should.be.a('array');
-                // res.body.length.should.be.eql(2);
+                res.body.should.be.a('object');
+                res.body.should.have.property('data');
+                res.body.data.should.be.a('array');
+
                 done();
             }).timeout(5000);
     }).timeout(5000);
@@ -208,12 +219,13 @@ describe('/GET products by names', () => {
 describe('/GET products by range price', () => {
     it('it should GET all the products by range price', (done) => {
         chai.request(server)
-            .get('/api/product/price/10/20')
+            .get('/api/products/price/10/20')
             .set("Authorization", "Bearer " + process.env.BEARER_TOKEN)
             .end((err, res) => {
                 res.should.have.status(200);
-                res.body.should.be.a('array');
-                // res.body.length.should.be.eql(2);
+                res.body.should.be.a('object');
+                res.body.should.have.property('data');
+                res.body.data.should.be.a('array');
                 done();
             }).timeout(5000);
     }).timeout(5000);
@@ -223,12 +235,14 @@ describe('/GET products by range price', () => {
 describe('/GET products by range Date', () => {
     it('it should GET all the products by range Date', (done) => {
         chai.request(server)
-            .get('/api/product/date/2019-01-01/2019-01-02')
+            .get('/api/products/date/2019-01-01/2019-01-02')
             .set("Authorization", "Bearer " + process.env.BEARER_TOKEN)
             .end((err, res) => {
                 res.should.have.status(200);
-                res.body.should.be.a('array');
-                // res.body.length.should.be.eql(2);
+                res.body.should.be.a('object');
+                res.body.should.have.property('data');
+                res.body.data.should.be.a('array');
+
                 done();
             }).timeout(5000);
     }).timeout(5000);
@@ -255,14 +269,15 @@ describe('/DELETE product by id', () => {
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.be.a('object');
-                    res.body._doc.should.have.property('title');
-                    res.body._doc.should.have.property('description');
-                    res.body._doc.should.have.property('price');
-                    res.body._doc.should.have.property('category');
-                    res.body._doc.should.have.property('images');
-                    res.body._doc.should.have.property('tags');
-                    res.body._doc.should.have.property('user');
-                    res.body._doc.should.have.property('_id').eql(_id.toString());
+                    res.body.should.have.property('data');
+                    res.body.data.should.have.property('title');
+                    res.body.data.should.have.property('description');
+                    res.body.data.should.have.property('price');
+                    res.body.data.should.have.property('category');
+                    res.body.data.should.have.property('images');
+                    res.body.data.should.have.property('tags');
+                    res.body.data.should.have.property('user');
+                    res.body.data.should.have.property('_id').eql(_id.toString());
                     done();
                 }).timeout(5000);
         });

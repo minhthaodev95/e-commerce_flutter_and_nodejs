@@ -3,7 +3,8 @@
     + Frontend: Flutter
     + Database : MongoDB
 # Install and run the application
-    
+
+
         git clone https://github.com/minhthaodev95/e-commerce_flutter_and_nodejs
         cd Flutter_ecommerce_app/server_nodejs
         npm install
@@ -12,4 +13,5 @@
         flutter pub get
         flutter run
 
-## Link API-docs: *[API-docs](http://localhost:3000/api-docs)*
+## Link API-docs: [API-docs](http://localhost:3000/api-docs)
+

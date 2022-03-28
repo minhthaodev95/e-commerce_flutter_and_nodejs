@@ -57,7 +57,10 @@ module.exports = {
                     error: err
                 });
             } else {
-                res.status(200).json(products);
+                res.status(200).json({
+                    message: 'Success',
+                    data: products
+                });
             }
         });
     },
@@ -70,7 +73,10 @@ module.exports = {
                     error: err
                 });
             } else {
-                res.status(200).json(product);
+                res.status(200).json({
+                    message: 'Success',
+                    data: product
+                });
             }
         });
     },
@@ -112,7 +118,10 @@ module.exports = {
                     error: err
                 });
             } else {
-                res.status(200).json(product);
+                res.status(200).json({
+                    message: 'Success',
+                    data: product
+                });
             }
         });
     },
@@ -166,7 +175,10 @@ module.exports = {
             product.images = req.body.images != null ? product.images.concat(req.body.images) : product.images;
             product.tags = req.body.tags != null ? product.tags.concat(req.body.tags) : product.tags;
             product.save().then(function(product) {
-                res.status(200).json(product);
+                res.status(200).json({
+                    message: 'Success',
+                    data: product
+                });
             }).catch(function(err) {
                 res.status(500).json({
                     message: 'Error when updating product',
@@ -194,7 +206,7 @@ module.exports = {
 
                 res.status(200).json({
                     message: 'Product deleted successfully',
-                    ...product
+                    data: product
                 });
             } else {
                 res.status(500).json({
@@ -211,9 +223,9 @@ module.exports = {
             }
         });
     },
-    getProductByCategory: (req, res, next) => {
+    getProductsByCategory: (req, res, next) => {
         Product.find({
-            category: req.params.categoryId
+            category: req.params.id
         }).populate('category').populate('user').exec((err, products) => {
             if (err) {
                 console.error(err);
@@ -222,11 +234,14 @@ module.exports = {
                     error: err
                 });
             } else {
-                res.status(200).json(products);
+                res.status(200).json({
+                    message: 'Success',
+                    data: products
+                });
             }
         });
     },
-    getProductByUser: (req, res, next) => {
+    getProductsByUser: (req, res, next) => {
         Product.find({
             user: req.params.id
         }).populate('category').populate('user').exec((err, products) => {
@@ -237,7 +252,10 @@ module.exports = {
                     error: err
                 });
             } else {
-                res.status(200).json(products);
+                res.status(200).json({
+                    message: 'Success',
+                    data: products
+                });
             }
         });
     },
@@ -256,7 +274,7 @@ module.exports = {
             }
         });
     },
-    getProductByPrice: (req, res, next) => {
+    getProductsByPrice: (req, res, next) => {
         Product.find({
             price: req.params.price
         }).populate('category').populate('user').exec((err, products) => {
@@ -296,7 +314,7 @@ module.exports = {
     },
 
     //get products by price (range)
-    getProductByPriceRange: (req, res, next) => {
+    getProductsByPriceRange: (req, res, next) => {
         Product.find({
             price: { $gte: req.params.min, $lte: req.params.max }
         }).populate('category').populate('user').exec((err, products) => {
@@ -307,12 +325,15 @@ module.exports = {
                     error: err
                 });
             } else {
-                res.status(200).json(products);
+                res.status(200).json({
+                    message: 'Success',
+                    data: products
+                });
             }
         });
     },
     //get product by names
-    getProductByNames: (req, res, next) => {
+    getProductsByName: (req, res, next) => {
         Product.find({
             title: { $regex: req.params.name, $options: 'i' }
         }).populate('category').populate('user').exec((err, products) => {
@@ -323,14 +344,17 @@ module.exports = {
                     error: err
                 });
             } else {
-                res.status(200).json(products);
+                res.status(200).json({
+                    message: 'Success',
+                    data: products
+                });
             }
         });
     },
 
 
     //get products by date(range)
-    getProductByDateRange: (req, res, next) => {
+    getProductsByDateRange: (req, res, next) => {
         Product.find({
             created_at: { $gte: new Date(req.params.min), $lte: new Date(req.params.max).setHours(23, 59, 59) }
         }).populate('category').populate('user').exec((err, products) => {
@@ -341,12 +365,15 @@ module.exports = {
                     error: err
                 });
             } else {
-                res.status(200).json(products);
+                res.status(200).json({
+                    message: 'Success',
+                    data: products
+                });
             }
         });
     },
     //get products by tags
-    getProductByTags: (req, res, next) => {
+    getProductsByTag: (req, res, next) => {
         Product.find({
             tags: { $in: req.params.tag }
         }).populate('category').populate('user').exec((err, products) => {
@@ -357,12 +384,15 @@ module.exports = {
                     error: err
                 });
             } else {
-                res.status(200).json(products);
+                res.status(200).json({
+                    message: 'Success',
+                    data: products
+                });
             }
         });
     },
     // get product  filter by category, price, date, tags, name
-    getProductFilter: (req, res, next) => {
+    getProductsFilter: (req, res, next) => {
         var query = {};
         if (req.query.category) {
             query.category = req.query.category;
@@ -389,7 +419,10 @@ module.exports = {
                     error: err
                 });
             } else {
-                res.status(200).json(products);
+                res.status(200).json({
+                    message: 'Success',
+                    data: products
+                });
 
             }
         });

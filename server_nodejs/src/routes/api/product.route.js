@@ -11,49 +11,49 @@ const router = express.Router();
 
 let productApi = (app) => {
     //get all products from
-    router.get('/', authController.isAuthenticated, productController.getAllProduct);
+    router.get('/products', authController.isAuthenticated, productController.getAllProduct);
     //post a product
-    router.post('/', authController.isAuthenticated, authController.isShopOwner,
+    router.post('/product', authController.isAuthenticated, authController.isShopOwner,
         multer().array('files', 12),
         productController.createProduct);
     // get product by _id
-    router.get('/:id', authController.isAuthenticated, productController.getProductById);
+    router.get('/product/:id', authController.isAuthenticated, productController.getProductById);
     // delete product by _id
-    router.delete('/:id', authController.isAuthenticated, authController.isShopOwner, productController.deleteProduct);
+    router.delete('/product/:id', authController.isAuthenticated, authController.isShopOwner, productController.deleteProduct);
     // update product by _id
-    router.put('/:id', authController.isAuthenticated, authController.isShopOwner,
+    router.put('/product/:id', authController.isAuthenticated, authController.isShopOwner,
         multer().array('images', 12),
         productController.updateProduct);
-    //get product by userId
-    router.get('/user/:id', authController.isAuthenticated, productController.getProductByUser);
+    //get products by userId
+    router.get('/products/user/:id', authController.isAuthenticated, productController.getProductsByUser);
     //get products by categoryId
-    router.get('/category/:categoryId', authController.isAuthenticated, productController.getProductByCategory);
-    //stream Image products
-    router.get('/image/:filename', productController.getImage);
+    router.get('/products/category/:id', authController.isAuthenticated, productController.getProductsByCategory);
+    //stream Image product
+    router.get('/product/image/:filename', productController.getImage);
     // get Products by price (range)
-    router.get('/price/:min/:max', authController.isAuthenticated, productController.getProductByPriceRange);
+    router.get('/products/price/:min/:max', authController.isAuthenticated, productController.getProductsByPriceRange);
     //get Products by name
-    router.get('/name/:name', authController.isAuthenticated, productController.getProductByNames);
+    router.get('/products/name/:name', authController.isAuthenticated, productController.getProductsByName);
     //get products by date (range)
-    router.get('/date/:min/:max', authController.isAuthenticated, productController.getProductByDateRange);
+    router.get('/products/date/:min/:max', authController.isAuthenticated, productController.getProductsByDateRange);
     //get product by tag
-    router.get('/tags/:tag', authController.isAuthenticated, productController.getProductByTags);
+    router.get('/products/tags/:tag', authController.isAuthenticated, productController.getProductsByTag);
     //get product  filter
-    router.get('/filter/product', authController.isAuthenticated, productController.getProductFilter);
+    router.get('/products/filter', authController.isAuthenticated, productController.getProductsFilter);
 
 
 
 
 
 
-    return app.use('/api/product', router);
+    return app.use('/api', router);
 }
 
 module.exports = productApi;
 
 /**
  * @swagger
- * /api/product:
+ * /api/products:
  *     get:
  *         summary: Get all products
  *         tags:
@@ -106,7 +106,7 @@ module.exports = productApi;
 
 /**
  * @swagger
- * /api/product/user/:id:
+ * /api/products/user/:id:
  *     get:
  *         summary: Get all user's products by userId 
  *         tags:
@@ -116,7 +116,7 @@ module.exports = productApi;
 
 /**
  * @swagger
- * /api/product/category/:id:
+ * /api/products/category/:id:
  *     get:
  *         summary: Get all products by category 
  *         tags:
@@ -135,7 +135,7 @@ module.exports = productApi;
 
 /**
  * @swagger
- * /api/product/price/:min/:max:
+ * /api/products/price/:min/:max:
  *     get:
  *         summary: Get all products by range price 
  *         tags:
@@ -143,7 +143,7 @@ module.exports = productApi;
  * */
 /**
  * @swagger
- * /api/product/name/:name:
+ * /api/products/name/:name:
  *     get:
  *         summary: Get all products by name
  *         tags:
@@ -152,7 +152,7 @@ module.exports = productApi;
 
 /**
  * @swagger
- * /api/product/date/:min/:max:
+ * /api/products/date/:min/:max:
  *     get:
  *         summary: Get all products by range date 
  *         tags:
@@ -161,7 +161,7 @@ module.exports = productApi;
 
 /**
  * @swagger
- * /api/product/tags/:tags:
+ * /api/products/tags/:tags:
  *    get:
  *        summary: Get all products by tag
  *        tags:
