@@ -11,6 +11,8 @@ import authController from './controllers/auth/auth.controller';
 import cors from 'cors';
 import configViewEngine from './config/viewEngine';
 
+
+
 // swagger UI
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';

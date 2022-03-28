@@ -14,7 +14,7 @@ let productApi = (app) => {
     router.get('/', authController.isAuthenticated, productController.getAllProduct);
     //post a product
     router.post('/', authController.isAuthenticated, authController.isShopOwner,
-        multer().array('images', 12),
+        multer().array('files', 12),
         productController.createProduct);
     // get product by _id
     router.get('/:id', authController.isAuthenticated, productController.getProductById);

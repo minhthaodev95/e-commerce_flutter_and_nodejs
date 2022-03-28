@@ -10,11 +10,10 @@ module.exports = {
     isAuthenticated: (req, res, next) => {
         // console.log(req.headers);
         if (req.headers && req.headers.authorization) {
-            // console.log(req.headers.authorization);
             var authorization = req.headers.authorization.substring(7);
             jwt.verify(authorization, process.env.SECRET_KEY, function(err, decoded) {
                 if (err) {
-
+                    console.error(err);
                     //return token expiresIn
                     return res.status(401).json({
                         error: 'Token is invalid or expired'
@@ -26,6 +25,7 @@ module.exports = {
             });
         } else {
             return res.status(401).send({
+
                 message: 'Unauthorized request'
             });
         }
@@ -106,21 +106,34 @@ module.exports = {
                         password: hash,
                         phone: req.body.phone,
                     });
-                    user.save(function(err, result) {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            console.log(result)
-                        }
-                    });
-                    res.status(200).send({
-                        "message": " User Registed !",
-                        "status": "success"
-                    });
+                    // if user missing email, throw an error message and return status code 400
+                    if (!user.email) {
+                        res.status(400).send({
+                            "errors": {
+                                "email": {
+                                    "message": "Email is required",
+                                    "kind": "required"
+                                }
+                            }
+                        });
+                    } else {
+                        user.save(function(err, result) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                // console.log(result)
+                                res.status(200).send({
+                                    "message": " User Registed !",
+                                    "status": "success",
+                                    "data": user
+                                });
+                            }
+                        });
+
+                    }
                 }
             });
         } else {
-            console.log("User already exist");
             res.status(203).json({
                 "message": "User already exists !",
                 "status": "error"

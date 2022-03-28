@@ -11,7 +11,10 @@ module.exports = {
                     error: err
                 });
             } else {
-                res.status(200).json(categories);
+                res.status(200).json({
+                    message: 'Categories successfully retrieved',
+                    data: categories
+                });
             }
         }),
     createCategory: (req, res, next) => {
@@ -19,14 +22,19 @@ module.exports = {
             title: req.body.title,
             description: req.body.description
         });
+
         category.save((err, category) => {
             if (err) {
+                console.error(err);
                 res.status(500).json({
                     message: 'Error when creating category',
                     error: err
                 });
             } else {
-                res.status(201).json(category);
+                res.status(201).json({
+                    message: 'Category created successfully',
+                    data: category
+                });
             }
         });
     },
@@ -40,7 +48,10 @@ module.exports = {
                     error: err
                 });
             } else {
-                res.status(200).json(category);
+                res.status(200).json({
+                    message: 'Category updated successfully',
+                    data: category
+                });
             }
         });
     },
@@ -53,7 +64,8 @@ module.exports = {
                 });
             } else {
                 res.status(200).json({
-                    message: 'Delete category success'
+                    message: 'Delete category success',
+                    data: category
                 });
             }
         });

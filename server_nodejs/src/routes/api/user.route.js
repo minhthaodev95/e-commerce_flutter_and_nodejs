@@ -18,6 +18,10 @@ let userRoutes = (app) => {
     router.put('/me', upload.single('files'), authController.isAuthenticated, userController.updateUser);
     router.delete('/me', authController.isAuthenticated, userController.deleteUser);
     router.get('/me/avatar/:filename', userController.getAvatar);
+    //router change password
+    router.put('/me/password', authController.isAuthenticated, userController.changePassword);
+    // router forgot password
+    router.post('/forgot', userController.forgotPassword);
     return app.use('/api/user', router);
 }
 module.exports = userRoutes;
@@ -56,4 +60,23 @@ module.exports = userRoutes;
  *         summary: Link stream image get from database
  *         tags:
  *             - User
+ * */
+
+/**
+ * @swagger
+ * /api/user/me/password:
+ *      put:
+ *          summary: Change password for user
+ *          tags:
+ *              - User
+ * */
+
+
+/**
+ * @swagger
+ * /api/user/forgot:
+ *     post:
+ *          summary: Send email to user to reset password
+ *          tags:
+ *              - User
  * */

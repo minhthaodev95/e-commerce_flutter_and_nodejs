@@ -15,7 +15,8 @@ module.exports = {
             } else {
                 if (user != null) {
                     res.status(200).json({
-                        message: 'User successfully deleted'
+                        message: 'User successfully deleted',
+                        data: user
                     });
 
                 } else {
@@ -35,7 +36,10 @@ module.exports = {
                     error: err
                 });
             } else {
-                res.status(200).json(users);
+                res.status(200).json({
+                    message: 'Users successfully retrieved',
+                    data: users
+                });
             }
         });
     },
@@ -48,7 +52,10 @@ module.exports = {
                     error: err
                 });
             } else {
-                res.status(200).json(user);
+                res.status(200).json({
+                    message: 'User successfully retrieved',
+                    data: user
+                });
             }
         });
     },
@@ -61,7 +68,10 @@ module.exports = {
                     error: err
                 });
             } else {
-                res.status(200).json(user);
+                res.status(200).json({
+                    message: 'User successfully retrieved',
+                    data: user
+                });
             }
         });
     },
@@ -76,7 +86,10 @@ module.exports = {
             } else {
                 if (user != null) {
 
-                    res.status(200).json(user);
+                    res.status(200).json({
+                        message: 'User successfully retrieved',
+                        data: user
+                    });
                 } else {
                     res.status(404).json({
                         message: 'User not found'
@@ -94,7 +107,10 @@ module.exports = {
                     error: err
                 });
             } else {
-                res.status(200).json(users);
+                res.status(200).json({
+                    message: 'Users successfully retrieved',
+                    data: users
+                });
             }
         });
     },
@@ -109,7 +125,8 @@ module.exports = {
             } else {
                 if (user != null) {
                     res.status(200).json({
-                        message: 'User successfully updated'
+                        message: 'User successfully updated',
+                        data: user
                     });
                 } else {
                     res.status(404).json({

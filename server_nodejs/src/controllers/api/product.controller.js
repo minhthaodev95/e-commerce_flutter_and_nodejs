@@ -62,7 +62,6 @@ module.exports = {
         });
     },
     getProductById: (req, res, next) => {
-
         Product.findById(req.params.id).populate('category').populate('user').exec((err, product) => {
             if (err) {
                 console.error(err);
@@ -77,7 +76,6 @@ module.exports = {
     },
     createProduct: async(req, res, next) => {
 
-        // req.file.path = req.file.path.replace('public', '');
 
         if (req.files && req.files.length > 0) {
             var listImage = [];
@@ -94,6 +92,7 @@ module.exports = {
                 listImage.push(pathImage);
             }
             req.body.images = listImage;
+            req.body.featureImage = listImage[0];
         }
         const product = new Product({
             title: req.body.title,
@@ -101,8 +100,9 @@ module.exports = {
             price: req.body.price,
             category: req.body.category,
             user: req.userId,
-            featureImage: req.body.images[0],
-            images: req.body.images
+            tags: req.body.tags,
+            featureImage: req.body.featureImage != undefined ? req.body.featureImage : '',
+            images: req.body.images != undefined ? req.body.images : [],
         });
         product.save((err, product) => {
             if (err) {
@@ -112,7 +112,7 @@ module.exports = {
                     error: err
                 });
             } else {
-                res.status(201).json(product);
+                res.status(200).json(product);
             }
         });
     },
@@ -193,7 +193,8 @@ module.exports = {
                 product.delete();
 
                 res.status(200).json({
-                    message: 'Product deleted successfully'
+                    message: 'Product deleted successfully',
+                    ...product
                 });
             } else {
                 res.status(500).json({
@@ -379,7 +380,6 @@ module.exports = {
         if (req.query.title) {
             query.title = { $regex: req.query.title, $options: 'i' };
         }
-        console.log(query);
 
         Product.find(query).populate('category').populate('user').exec((err, products) => {
             if (err) {

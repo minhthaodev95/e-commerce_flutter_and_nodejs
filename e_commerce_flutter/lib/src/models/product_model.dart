@@ -2,7 +2,7 @@ import 'package:frontend_ecommerce_app/src/models/category.dart';
 import 'package:frontend_ecommerce_app/src/models/user_model.dart';
 
 class Product {
-  final String id;
+  final String? id;
   final String title;
   final String description;
   final List<String> images;
@@ -12,7 +12,7 @@ class Product {
   final Category category;
 
   Product({
-    required this.id,
+    this.id,
     required this.title,
     required this.description,
     required this.price,

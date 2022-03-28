@@ -5,18 +5,16 @@ import Product from '../../models/product.model';
 
 module.exports = {
     addToCart: async(req, res) => {
-        console.log(req.body);
         const {
             productId
         } = req.body;
         const quantity = Number.parseInt(req.body.quantity);
         const user_id = req.userId;
-        console.log(user_id, quantity, productId);
+        const shop = req.body.shop;
 
         const priceProduct = await Product.findOne({
             _id: productId
         }).then(product => {
-            console.log(product);
             return Number.parseInt(product.price);
         });
 
@@ -26,18 +24,19 @@ module.exports = {
         }).then(cart => {
             // if cart is not exist, create new cart
             if (!cart) {
-                console.log('none cart');
                 const newCart = new Cart({
                     user_id,
                     items: [{
                         productId,
                         quantity,
+                        shop,
                         total: quantity * priceProduct
                     }]
                 });
                 newCart.save().then(cart => {
                     res.status(200).json({
-                        cart
+                        message: 'Add product to cart successfully',
+                        data: cart
                     })
                 })
             } else {
@@ -50,12 +49,14 @@ module.exports = {
                     cart.items.push({
                         productId,
                         quantity,
+                        shop,
                         total: quantity * priceProduct
                     })
                 }
                 cart.save().then(cart => {
                     res.status(200).json({
-                        cart
+                        message: 'Add product to cart successfully',
+                        data: cart
                     })
                 })
             }
@@ -75,7 +76,6 @@ module.exports = {
         const priceProduct = await Product.findOne({
             _id: productId
         }).then(product => {
-            console.log(product);
             return Number.parseInt(product.price);
         });
         Cart.findOne({
@@ -88,7 +88,8 @@ module.exports = {
             }
             cart.save().then(cart => {
                 res.status(200).json({
-                    cart
+                    message: 'Update cart successfully',
+                    data: cart
                 })
             })
         })
@@ -97,7 +98,6 @@ module.exports = {
     //delete a product in cart with productId
     deleteProductInCart: async(req, res) => {
         const productId = req.params.productId;
-        console.log(productId);
         const user_id = req.userId;
         Cart.findOne({
             user_id
@@ -109,7 +109,8 @@ module.exports = {
             }
             cart.save().then(cart => {
                 res.status(200).json({
-                    cart
+                    message: 'Delete product in cart successfully',
+                    data: cart
                 })
             })
         })
@@ -121,43 +122,46 @@ module.exports = {
         const user_id = req.userId;
 
         Cart.findOne({
-            user_id: user_id
-        }).populate([{
-            path: "items",
-            populate: {
-                path: "productId",
+                user_id: user_id
+            }).populate([{
+                path: "items",
                 populate: [{
-                    path: "user",
-                    model: "User"
-                }, {
-                    path: "category",
-                    model: "Category"
-                }]
+                        path: "productId",
+                        populate: [{
+                            path: "user",
+                            model: "User"
+                        }, {
+                            path: "category",
+                            model: "Category"
+                        }]
+                    },
+                    {
+                        path: "shop",
+                        model: "User"
+                    }
+                ]
+            }])
+            .then((carts) => {
+                if (!carts) {
+                    return res.status(404).json({
+                        message: 'Cart not found'
+                    });
+                }
 
-            }
-        }]).then((carts) => {
-            console.log(carts);
-            if (!carts) {
-                return res.status(404).json({
-                    message: 'Cart not found'
+                res.status(200).json({
+                    message: 'Get cart successfully',
+                    data: carts
                 });
-            }
-
-            res.status(200).json({
-                message: 'Get cart successfully',
-                carts: carts
+            }).catch((err) => {
+                res.status(500).json({
+                    message: 'Get cart failed',
+                    error: err
+                });
             });
-        }).catch((err) => {
-            res.status(500).json({
-                message: 'Get cart failed',
-                error: err
-            });
-        });
     },
     deleteCartById: (req, res) => {
         const { cartId } = req.body;
-        const { user_id } = req.userId;
-
+        const user_id = req.userId;
         Cart.findOne({
             _id: cartId,
             user_id: user_id
@@ -167,10 +171,10 @@ module.exports = {
                     message: 'Cart not found'
                 });
             }
-
             cart.remove().then(() => {
                 res.status(200).json({
-                    message: 'Delete cart successfully'
+                    message: 'Delete cart successfully',
+                    data: cart
                 });
             }).catch((err) => {
                 res.status(500).json({

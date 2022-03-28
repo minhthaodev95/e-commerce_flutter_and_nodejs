@@ -18,9 +18,38 @@ class ProductRepository {
   ProductRepository();
 
   // create a new product
-  Future<Product?> createProduct(Product product) async {
+  Future<Product?> createProduct(
+      {String? title,
+      String? description,
+      int? price,
+      String? category,
+      List<String>? tags,
+      List<File>? files}) async {
+    String? token = await getToken();
+
     try {
-      final response = await dio.post('/', data: product.toMap());
+      final product = {
+        'title': title,
+        'description': description,
+        'price': price,
+        'category': category,
+        'tags': tags,
+      };
+
+      FormData formData = FormData();
+
+      formData = FormData.fromMap({
+        ...product,
+        "files": [
+          for (File file in files!)
+            await MultipartFile.fromFile(file.path,
+                filename: file.path.split('/').last),
+        ],
+      });
+
+      final response = await dio.post('/',
+          data: formData,
+          options: Options(headers: {"Authorization": "Bearer $token"}));
       return Product.fromJson(response.data);
     } catch (e) {
       return null;

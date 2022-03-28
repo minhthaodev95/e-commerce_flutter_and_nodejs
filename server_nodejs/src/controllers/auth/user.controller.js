@@ -8,8 +8,8 @@ var crypto = require('crypto');
 import { GridFsStorage } from 'multer-gridfs-storage';
 import { Readable } from 'stream';
 require('dotenv').config();
-
-
+import randomstring from 'randomstring';
+const nodemailer = require("nodemailer");
 
 let gridfsBucket;
 const conn = mongoose.createConnection(process.env.MONGODB_URI);
@@ -116,7 +116,10 @@ module.exports = {
 
                 }
 
-                res.status(200).json(user);
+                res.status(200).json({
+                    message: 'User updated successfully',
+                    data: user
+                });
             }
         });
     },
@@ -129,8 +132,9 @@ module.exports = {
                     error: err
                 });
             } else {
-                res.status(204).json({
-                    message: 'User successfully deleted'
+                res.status(200).json({
+                    message: 'User successfully deleted',
+                    status: 'success'
                 });
             }
         });
@@ -166,6 +170,136 @@ module.exports = {
 
         });
     },
+
+    //change password for user to new password
+    changePassword: (req, res, next) => {
+        User.findOne({ _id: req.userId }).then((user) => {
+            if (user !== null) {
+                bcrypt.compare(req.body.oldPassword, user.password, (err, result) => {
+                    if (err) {
+                        res.status(500).json({
+                            message: 'Error when changing password',
+                            error: err
+                        });
+                    } else {
+                        if (result) {
+                            bcrypt.hash(req.body.newPassword, 10, (err, hash) => {
+                                if (err) {
+                                    res.status(500).json({
+                                        message: 'Error when changing password',
+                                        error: err
+                                    });
+                                } else {
+                                    User.findOneAndUpdate({ _id: req.userId }, {
+                                        $set: {
+                                            password: hash
+                                        }
+                                    }, (err, user) => {
+                                        if (err) {
+                                            res.status(500).json({
+                                                message: 'Error when changing password',
+                                                error: err
+                                            });
+                                        } else {
+                                            res.status(200).json({
+                                                message: 'Password changed successfully',
+                                                status: 'success'
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                });
+            } else {
+                res.status(203).json({
+                    "message": "User not found !",
+                    "status": "error"
+                });
+            }
+        }).catch(function(err) {
+            console.log("Error: " + err.message);
+        })
+    },
+
+
+    // forgot password reset contains email and new password
+    forgotPassword: (req, res, next) => {
+        //generate new password for the user
+        var newPassword = randomstring.generate(8);
+
+        User.findOne({ email: req.body.email }).then((user) => {
+            if (user !== null) {
+                bcrypt.hash(newPassword, 10, (err, hash) => {
+                    if (err) {
+                        res.status(500).json({
+                            message: 'Error when changing password',
+                            error: err
+                        });
+                    } else {
+                        User.findOneAndUpdate({ email: req.body.email }, {
+                            $set: {
+                                password: hash
+                            }
+                        }, (err, user) => {
+                            if (err) {
+                                res.status(500).json({
+                                    message: 'Error when changing password',
+                                    error: err
+                                });
+                            } else {
+                                //send new password to email address
+                                // var transporter = nodemailer.createTransport({
+                                //     service: 'gmail',
+                                //     auth: {
+                                //         user: '',
+                                //         pass: ''
+                                //     }
+                                // });
+                                const transporter = nodemailer.createTransport({
+                                    host: 'smtp.ethereal.email',
+                                    port: 587,
+                                    auth: {
+                                        user: 'tracy.torphy83@ethereal.email',
+                                        pass: 'TXdbZZWHFpH2UgNqUx'
+                                    }
+                                });
+
+                                var mailOptions = {
+                                    from: 'admin@gmail.com',
+                                    to: user.email,
+                                    subject: 'Reset Password',
+                                    text: 'Your new password is: ' + newPassword
+                                };
+                                transporter.sendMail(mailOptions, function(error, info) {
+                                    if (error) {
+                                        console.log(error);
+                                    } else {
+                                        console.log('Email sent: ' + info.response);
+                                    }
+                                });
+
+                                res.status(200).json({
+                                    message: 'Password recoverd successfully',
+                                    status: 'success'
+                                });
+                            }
+                        });
+                    }
+                });
+            } else {
+                res.status(203).json({
+                    "message": "User not found !",
+                    "status": "error"
+                });
+            }
+        }).catch(function(err) {
+            console.log("Error: " + err.message);
+        })
+    },
+
+
 
 
 }

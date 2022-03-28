@@ -147,21 +147,23 @@ class _AccountScreenState extends State<AccountScreen> {
                       children: [
                         Stack(
                           children: [
-                            ClipOval(
-                              child: Platform.isAndroid
-                                  ? Image.network(
-                                      'http://10.0.2.2:3000/api/user/me${state.user.image}',
-                                      width: 70,
-                                      height: 70,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Image.network(
-                                      'http://localhost:3000/api/user/me${state.user.image}',
-                                      width: 70,
-                                      height: 70,
-                                      fit: BoxFit.cover,
-                                    ),
-                            ),
+                            state.user.image == null
+                                ? Container()
+                                : ClipOval(
+                                    child: Platform.isAndroid
+                                        ? Image.network(
+                                            'http://10.0.2.2:3000/api/user/me${state.user.image}',
+                                            width: 70,
+                                            height: 70,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Image.network(
+                                            'http://localhost:3000/api/user/me${state.user.image}',
+                                            width: 70,
+                                            height: 70,
+                                            fit: BoxFit.cover,
+                                          ),
+                                  ),
                             Positioned(
                               right: 0,
                               top: 0,

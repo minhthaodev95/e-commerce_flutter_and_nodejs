@@ -18,6 +18,10 @@ const CartSchema = new Schema({
         total: {
             type: Number,
             required: true,
+        },
+        shop: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
         }
     }],
     user_id: {

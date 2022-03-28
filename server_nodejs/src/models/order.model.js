@@ -3,12 +3,12 @@ import mongoose from 'mongoose';
 
 
 const OrderSchema = new mongoose.Schema({
-    user_seller_id: {
+    shop_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
-    user_buyer_id: {
+    customer_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
@@ -35,7 +35,7 @@ const OrderSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'cancelled', 'confirmed'],
+        enum: ['pending', 'processing', 'cancelled', 'confirmed'],
         default: 'pending'
     },
     created_at: {
