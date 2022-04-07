@@ -50,7 +50,7 @@ class ProductRepository {
       final response = await dio.post('/',
           data: formData,
           options: Options(headers: {"Authorization": "Bearer $token"}));
-      return Product.fromJson(response.data);
+      return Product.fromJson(response.data['data']);
     } catch (e) {
       return null;
     }
@@ -63,7 +63,7 @@ class ProductRepository {
         Response response = await dio.get('/',
             options: Options(headers: {"Authorization": "Bearer $token"}));
         if (response.statusCode == 200) {
-          return (response.data as List)
+          return (response.data['data'] as List)
               .map((product) => Product.fromJson(product))
               .toList();
         } else {
@@ -84,7 +84,7 @@ class ProductRepository {
           options: Options(
               headers: {"Authorization": "Bearer ${await getToken()}"}));
       if (response.statusCode == 200) {
-        return (response.data as List)
+        return (response.data['data'] as List)
             .map((product) => Product.fromJson(product))
             .toList();
       } else {
@@ -103,7 +103,7 @@ class ProductRepository {
           options: Options(
               headers: {"Authorization": "Bearer ${await getToken()}"}));
       if (response.statusCode == 200) {
-        return (response.data as List)
+        return (response.data['data'] as List)
             .map((product) => Product.fromJson(product))
             .toList();
       } else {
@@ -122,7 +122,7 @@ class ProductRepository {
           options: Options(
               headers: {"Authorization": "Bearer ${await getToken()}"}));
       if (response.statusCode == 200) {
-        return Product.fromJson(response.data);
+        return Product.fromJson(response.data['data']);
       } else {
         return null;
       }
@@ -175,7 +175,7 @@ class ProductRepository {
           options: Options(
               headers: {"Authorization": "Bearer ${await getToken()}"}));
       if (response.statusCode == 200) {
-        return (response.data as List)
+        return (response.data['data'] as List)
             .map((product) => Product.fromJson(product))
             .toList();
       } else {
@@ -194,7 +194,7 @@ class ProductRepository {
           options: Options(
               headers: {"Authorization": "Bearer ${await getToken()}"}));
       if (response.statusCode == 200) {
-        return (response.data as List)
+        return (response.data['data'] as List)
             .map((product) => Product.fromJson(product))
             .toList();
       } else {
@@ -215,7 +215,7 @@ class ProductRepository {
           options: Options(
               headers: {"Authorization": "Bearer ${await getToken()}"}));
       if (response.statusCode == 200) {
-        return (response.data as List)
+        return (response.data['data'] as List)
             .map((product) => Product.fromJson(product))
             .toList();
       } else {
@@ -234,7 +234,7 @@ class ProductRepository {
           options: Options(
               headers: {"Authorization": "Bearer ${await getToken()}"}));
       if (response.statusCode == 200) {
-        return (response.data as List)
+        return (response.data['data'] as List)
             .map((product) => Product.fromJson(product))
             .toList();
       } else {

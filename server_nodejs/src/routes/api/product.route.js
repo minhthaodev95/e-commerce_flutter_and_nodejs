@@ -11,7 +11,7 @@ const router = express.Router();
 
 let productApi = (app) => {
     //get all products from
-    router.get('/products', authController.isAuthenticated, productController.getAllProduct);
+    router.get('/product', authController.isAuthenticated, productController.getAllProduct);
     //post a product
     router.post('/product', authController.isAuthenticated, authController.isShopOwner,
         multer().array('files', 12),
@@ -25,21 +25,21 @@ let productApi = (app) => {
         multer().array('images', 12),
         productController.updateProduct);
     //get products by userId
-    router.get('/products/user/:id', authController.isAuthenticated, productController.getProductsByUser);
+    router.get('/product/user/:id', authController.isAuthenticated, productController.getProductsByUser);
     //get products by categoryId
-    router.get('/products/category/:id', authController.isAuthenticated, productController.getProductsByCategory);
+    router.get('/product/category/:id', authController.isAuthenticated, productController.getProductsByCategory);
     //stream Image product
     router.get('/product/image/:filename', productController.getImage);
     // get Products by price (range)
-    router.get('/products/price/:min/:max', authController.isAuthenticated, productController.getProductsByPriceRange);
+    router.get('/product/price/:min/:max', authController.isAuthenticated, productController.getProductsByPriceRange);
     //get Products by name
-    router.get('/products/name/:name', authController.isAuthenticated, productController.getProductsByName);
+    router.get('/product/name/:name', authController.isAuthenticated, productController.getProductsByName);
     //get products by date (range)
-    router.get('/products/date/:min/:max', authController.isAuthenticated, productController.getProductsByDateRange);
+    router.get('/product/date/:min/:max', authController.isAuthenticated, productController.getProductsByDateRange);
     //get product by tag
-    router.get('/products/tags/:tag', authController.isAuthenticated, productController.getProductsByTag);
+    router.get('/product/tags/:tag', authController.isAuthenticated, productController.getProductsByTag);
     //get product  filter
-    router.get('/products/filter', authController.isAuthenticated, productController.getProductsFilter);
+    router.get('/product/filter', authController.isAuthenticated, productController.getProductsFilter);
 
 
 
