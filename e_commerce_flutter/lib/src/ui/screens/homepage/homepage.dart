@@ -10,6 +10,8 @@ import 'package:frontend_ecommerce_app/src/repository/order_repository.dart';
 import 'package:frontend_ecommerce_app/src/repository/user_repository.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../services/notification_service.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
   @override
@@ -21,6 +23,8 @@ class _HomePageState extends State<HomePage> {
   late Cart cart;
   @override
   void initState() {
+    // init notification service
+    NotificationService().init();
     super.initState();
   }
 
@@ -118,13 +122,20 @@ class _HomePageState extends State<HomePage> {
                           // print(cart);
                         }
                       },
-                      child: const Text('Get Order'),
+                      child: const Text('Get Cart'),
                     ),
                     ElevatedButton(
                       onPressed: () async {
                         await OrderRepository().createOrder(cart);
                       },
                       child: const Text('Create Order'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await NotificationService()
+                            .showNotification(1, 'Hello', 'Hello');
+                      },
+                      child: const Text('Get Order'),
                     ),
                     // SizedBox(
                     //     height: 600,
