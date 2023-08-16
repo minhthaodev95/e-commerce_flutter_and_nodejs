@@ -13,11 +13,12 @@ let gridFsBucket;
 const connection = mongoose.createConnection(process.env.MONGODB_URI);
 connection.once('open', () => {
     // Init stream
-    gridFsBucket = new mongoose.mongo.GridFSBucket(connection.db, { bucketName: 'product' }, );
+    gridFsBucket = new mongoose.mongo.GridFSBucket(connection.db, { bucketName: 'product' },);
 });
 
 
 //storage save data 
+
 // config folder store images of product
 const storage = new GridFsStorage({
     url: process.env.MONGODB_URI,
@@ -80,7 +81,7 @@ module.exports = {
             }
         });
     },
-    createProduct: async(req, res, next) => {
+    createProduct: async (req, res, next) => {
 
 
         if (req.files && req.files.length > 0) {
@@ -125,7 +126,7 @@ module.exports = {
             }
         });
     },
-    updateProduct: async(req, res, next) => {
+    updateProduct: async (req, res, next) => {
         if (req.files && req.files.length > 0) {
             var listImage = [];
             for (var file of req.files) {
@@ -142,7 +143,7 @@ module.exports = {
             }
             req.body.images = listImage;
         }
-        Product.findOne({ _id: req.params.id, user: req.userId }).then(function(product) {
+        Product.findOne({ _id: req.params.id, user: req.userId }).then(function (product) {
             if (!product) {
                 return res.status(404).json({
                     message: 'Product not found'
@@ -152,14 +153,14 @@ module.exports = {
 
                 var imageDelete = req.query.imageDelete;
 
-                gridFsBucket.find({ filename: imageDelete }).toArray(function(err, files) {
-                    files.forEach(function(file) {
+                gridFsBucket.find({ filename: imageDelete }).toArray(function (err, files) {
+                    files.forEach(function (file) {
                         gridFsBucket.delete(file._id);
                     })
                 });
 
                 function arrayRemove(arr, value) {
-                    return arr.filter(function(ele) {
+                    return arr.filter(function (ele) {
                         return ele != value;
                     });
                 }
@@ -174,12 +175,12 @@ module.exports = {
             product.category = req.body.category != null ? req.body.category : product.category;
             product.images = req.body.images != null ? product.images.concat(req.body.images) : product.images;
             product.tags = req.body.tags != null ? product.tags.concat(req.body.tags) : product.tags;
-            product.save().then(function(product) {
+            product.save().then(function (product) {
                 res.status(200).json({
                     message: 'Success',
                     data: product
                 });
-            }).catch(function(err) {
+            }).catch(function (err) {
                 res.status(500).json({
                     message: 'Error when updating product',
                     error: err
@@ -195,8 +196,8 @@ module.exports = {
                         var arrImage = image.split('/');
                         arrImage.splice(0, 3);
                         var fileimage = arrImage.join('');
-                        gridFsBucket.find({ filename: fileimage }).toArray(function(err, files) {
-                            files.forEach(function(file) {
+                        gridFsBucket.find({ filename: fileimage }).toArray(function (err, files) {
+                            files.forEach(function (file) {
                                 gridFsBucket.delete(file._id);
                             })
                         })
