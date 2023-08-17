@@ -5,7 +5,7 @@ import Product from '../../models/product.model';
 import User from '../../models/user.model';
 
 module.exports = {
-    createOrders: async(req, res) => {
+    createOrders: async (req, res) => {
         const orders = req.body.items;
         var mapped = orders.reduce((map, val) => {
             if (!map[val.shop]) {
@@ -16,6 +16,7 @@ module.exports = {
         }, {});
 
         var arrMapped = Object.values(mapped);
+
 
         var arrOrders = arrMapped.map((order) => {
             return {
@@ -74,21 +75,21 @@ module.exports = {
         const user_id = req.userId;
 
         Order.find({
-                $or: [{ shop_id: user_id }, { customer_id: user_id }]
-            }).populate({
-                path: "items",
-                populate: {
-                    path: "productId",
-                    populate: [{
-                        path: "user",
-                        model: "User"
-                    }, {
-                        path: "category",
-                        model: "Category"
-                    }]
+            $or: [{ shop_id: user_id }, { customer_id: user_id }]
+        }).populate({
+            path: "items",
+            populate: {
+                path: "productId",
+                populate: [{
+                    path: "user",
+                    model: "User"
+                }, {
+                    path: "category",
+                    model: "Category"
+                }]
 
-                }
-            })
+            }
+        })
             .then((orders) => {
                 if (!orders) {
                     return res.status(404).json({
